@@ -1,10 +1,10 @@
 module.exports = (sequelize, Sequelize) => {
   const Koor = sequelize.define("koor", {
     nim: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       primaryKey: true
     },
-    nama: {
+    name: {
       type: Sequelize.STRING
     },
     email: {

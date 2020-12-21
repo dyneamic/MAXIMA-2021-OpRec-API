@@ -34,20 +34,24 @@ db.status = require("../models/divisi/status.model")(sequelize, Sequelize);
 
 //koor
 db.koor = require("../models/koor/koor.model")(sequelize, Sequelize);
+db.passwordReset = require("../models/koor/passwordReset.model")(sequelize, Sequelize);
+
 db.divisi.hasMany(db.koor, { foreignKey: 'divisiID'});
-db.divisi.belongsTo(db.koor, { foreignKey: 'divisiID'});
+db.koor.belongsTo(db.divisi, { foreignKey: 'divisiID'});
+db.koor.hasMany(db.passwordReset, { foreignKey: 'nim'});
+db.passwordReset.belongsTo(db.koor, { foreignKey: 'nim'});
 //end of koor
 
 //registration
 db.mahasiswa = require("../models/registration/mahasiswa.model")(sequelize, Sequelize);
-db.mahasiswaDivisi = require("../models/registration/mahasiswaDivisi.model")(sequelize, Sequelize);
+//db.mahasiswaDivisi = require("../models/registration/mahasiswaDivisi.model")(sequelize, Sequelize);
 
-db.mahasiswa.hasMany(db.mahasiswaDivisi, { foreignKey: 'nim'});
-db.mahasiswaDivisi.belongsTo(db.mahasiswa, { foreignKey: 'nim'});
-db.divisi.hasMany(db.mahasiswaDivisi, { foreignKey: 'divisiID'});
-db.mahasiswaDivisi.belongsTo(db.divisi, { foreignKey: 'divisiID'});
-db.status.hasMany(db.mahasiswaDivisi, { foreignKey: 'statusID'});
-db.mahasiswaDivisi.belongsTo(db.status, { foreignKey: 'statusID'});
+//db.mahasiswa.hasMany(db.mahasiswaDivisi, { foreignKey: 'nim'});
+//db.mahasiswaDivisi.belongsTo(db.mahasiswa, { foreignKey: 'nim'});
+db.divisi.hasMany(db.mahasiswa, { foreignKey: 'divisiID'});
+db.mahasiswa.belongsTo(db.divisi, { foreignKey: 'divisiID'});
+db.status.hasMany(db.mahasiswa, { foreignKey: 'statusID'});
+db.mahasiswa.belongsTo(db.status, { foreignKey: 'statusID'});
 //end of registration
 
 //technical//

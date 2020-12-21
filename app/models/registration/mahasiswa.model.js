@@ -4,7 +4,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.INTEGER,
       primaryKey: true
     },
-    nama: {
+    name: {
       type: Sequelize.STRING,
     },
     email: {
@@ -24,6 +24,15 @@ module.exports = (sequelize, Sequelize) => {
     },
     uInstagram: {
       type: Sequelize.STRING
+    },
+    statusID: {
+      type: Sequelize.INTEGER
+    },
+    divisiID: {
+      type: Sequelize.STRING
+    },
+    lastUpdatedBy: {
+      type: Sequelize.INTEGER
     }
   });
 
