@@ -1,6 +1,6 @@
 const { authJwt } = require("../../middleware");
 const koorController = require("../../controllers/koor/koor.controller");
-const accKoorController = require("../../controllers/koor/acc.controller");
+const accKoorController = require("../../controllers/koor/accKoor.controller");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {

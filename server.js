@@ -158,7 +158,7 @@ function initial() {
 }
 */
 
-//db.sequelize.sync();
+db.sequelize.sync();
 
 //routing
 

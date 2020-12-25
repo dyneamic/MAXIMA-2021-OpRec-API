@@ -1,6 +1,7 @@
 const db = require("../../models");
 const config = require("../../config/auth.config");
 const Koor = db.koor;
+const PassResetKoor = db.passwordResetKoor;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -64,9 +65,76 @@ exports.signIn = (req,res) => {
   })
 }
 
+exports.createPassResetMhsOTP = (req,res) => {
+  const { nim } = req.body;
+  let randomOTP = '';
+  let characters = '0123456789';
+  let charactersLength = 6;
+  for ( var i = 0; i < 6; i++ ) {
+    randomOTP += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  console.log(randomOTP);
+  
+  Koor.count({
+    where: {
+      nim: nim
+    }
+  })
+  .then(found0 => {
+    if (found0 == 0) {
+      return res.status(404).send({ message: "NIM Not Found." });
+    } 
+    else {
+      Koor.findAll({
+        where: { nim: nim },
+        attributes: ['email', 'name']
+      })
+      .then(response1 => {
+        const { name, email } = response1[0];
+        PassResetKoor.count({
+          where: {
+            nim: nim
+          }
+        })
+        .then(found1 => {
+          if (found1 == 0) {
+            PassResetKoor.create({
+              nim: nim,
+              otp: randomOTP,
+              expired: 0
+            })
+            .then(function(response) {
+              //MailController.resetOTP(name, email, randomOTP);
+              res.status(200).send({ message: "OTP Berhasil Dibuat! "});
+            })
+            .catch(err => {
+              kode_error = 530405;
+              techControl.addErrorLog(kode_error, "Controller", "User", "Create OTP", err.message);
+              res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+            });
+          } 
+          else {
+            PassResetKoor.update({
+              otp: randomOTP,
+              expired: 0
+            }, 
+            {
+              where: { nim: nim }
+            })
+            .then(() => {
+              //MailController.resetOTP(query_name, query_email, randomOTP);
+              res.status(200).send({ message: "OTP Berhasil Dibuat! "});
+            })
+          }
+        })
+      })
+    }
+  })
+}
+
 exports.resetPassword = (req, res) => {
   const { nim, otp, password } = req.body;
-  PassReset.count({
+  PassResetKoor.count({
     where: {
       nim: nim
     }
@@ -75,7 +143,7 @@ exports.resetPassword = (req, res) => {
     if (found1 == 0) {
       return res.status(403).send({ message: "Password Reset Request Not Found." });
     } else {
-      PassReset.count({
+      PassResetKoor.count({
         where: {
           nim: nim,
           otp: otp
@@ -86,7 +154,7 @@ exports.resetPassword = (req, res) => {
           return res.status(403).send({ message: "Invalid OTP." });
         }
         else {
-          PassReset.count({
+          PassResetKoor.count({
             where: {
               nim: nim,
               otp: otp,
@@ -100,7 +168,7 @@ exports.resetPassword = (req, res) => {
             }
             else {
               //update password
-              User.update(
+              Koor.update(
                 {
                   password: bcrypt.hashSync(password, 8)
                 },
@@ -110,7 +178,7 @@ exports.resetPassword = (req, res) => {
               )
               .then(rowsUpdated => {
                 if (rowsUpdated == 1) {
-                  PassReset.update(
+                  PassResetKoor.update(
                     {
                       expired: 1
                     },
