@@ -3,11 +3,30 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const Koor = db.koor;
 
+verifyAPIKey = (req, res, next) => {
+  let key = req.headers["x-api-key"];
+  
+  if (!key) {
+    return res.status(401).send({ 
+      message: "No API key provided! Please contact MAXIMA 2021 WebMaster for further assistance."
+    })
+  }
+
+  if (key === config.APIKey) {
+    next();
+  }
+  else {
+    return res.status(401).send({ 
+      message: "Invalid API key! Please contact MAXIMA 2021 WebMaster for further assistance."
+    })
+  }
+}
+
 verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
+  let token = req.headers["Bearer"];
 
   if (!token) {
-    return res.status(403).send({
+    return res.status(401).send({
       message: "No token provided!"
     });
   }
@@ -22,6 +41,24 @@ verifyToken = (req, res, next) => {
     next();
   });
 };
+
+isKoor = (req, res, next) => {
+  Koor.findOne({
+    where: {
+      nim: req.nim
+    }
+  })
+  .then(response => {
+    if (response) {
+      next();
+      return;
+    }
+
+    res.status(403).send({
+      message: "Require Koor Role!"
+    })
+  })
+}
 
 isAdmin = (req, res, next) => {
   Koor.findAll({
@@ -69,7 +106,9 @@ isAdminOrBPH = (req, res, next) => {
 };
 
 const authJwt = {
+  verifyAPIKey: verifyAPIKey,
   verifyToken: verifyToken,
+  isKoor: isKoor,
   isAdmin: isAdmin,
   isAdminOrBPH: isAdminOrBPH
 };

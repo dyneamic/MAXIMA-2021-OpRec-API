@@ -6,7 +6,7 @@ module.exports = function(app) {
   app.use(function(req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
-      "x-access-token, Origin, Content-Type, Accept"
+      "Bearer, x-api-key, Origin, Content-Type, Accept"
     );
     next();
   });
@@ -18,7 +18,7 @@ module.exports = function(app) {
   )
   
   app.post(
-    "/api/koor/login",
+    "/api/koor/signin",
     accKoorController.signIn
   )
 
@@ -38,14 +38,14 @@ module.exports = function(app) {
   //per divisi
   app.get(
     "/api/koor/mahasiswa_divisi",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isKoor],
     koorController.byDivisi
   )
 
   //update status
   app.post(
     "/api/koor/update_status_mhs",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isKoor],
     koorController.updateStatus
   )
 };

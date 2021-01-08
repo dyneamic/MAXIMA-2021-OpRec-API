@@ -10,16 +10,43 @@ module.exports = (sequelize, Sequelize) => {
     email: {
       type: Sequelize.STRING
     },
-    password: {
+    divisiID: {
       type: Sequelize.STRING
     },
-    prodi: {
+    statusID: {
+      type: Sequelize.INTEGER
+    },
+    no_hp: {
+      type: Sequelize.STRING
+    },
+    token: {
+      type: Sequelize.STRING
+    },
+    tempat_lahir: {
+      type: Sequelize.STRING
+    },
+    tanggal_lahir: {
+      type: Sequelize.DATE
+    },
+    jenis_kelamin: {
+      type: Sequelize.STRING
+    },
+    alamat: {
       type: Sequelize.STRING
     },
     angkatan: {
       type: Sequelize.INTEGER
     },
-    no_hp: {
+    fakultas: {
+      type: Sequelize.STRING
+    },
+    prodi: {
+      type: Sequelize.STRING
+    },
+    ips: {
+      type: Sequelize.FLOAT
+    },
+    whatsapp: {
       type: Sequelize.STRING
     },
     uLine: {
@@ -28,11 +55,14 @@ module.exports = (sequelize, Sequelize) => {
     uInstagram: {
       type: Sequelize.STRING
     },
-    statusID: {
-      type: Sequelize.INTEGER
+    soal1: {
+      type: Sequelize.TEXT
     },
-    divisiID: {
-      type: Sequelize.STRING
+    soal2: {
+      type: Sequelize.TEXT
+    },
+    soal3: {
+      type: Sequelize.TEXT
     },
     lastUpdatedBy: {
       type: Sequelize.INTEGER

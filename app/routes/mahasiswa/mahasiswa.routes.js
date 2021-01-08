@@ -6,20 +6,49 @@ module.exports = function(app) {
   app.use(function(req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
-      "x-access-token, Origin, Content-Type, Accept"
+      "Bearer, x-api-key, Origin, Content-Type, Accept"
     );
     next();
   });
 
-  //mahasiswa daftar
+  //daftar cepat
   app.post(
-    "/api/mahasiswa/register",
-    mahasiswaController.registerMhs
+    "/api/mhs/signup",
+    mahasiswaController.SignUp
   )
+  
+  /*
+  //mahasiswa daftar akun
+  app.post(
+    "/api/mhs/signup",
+    accMhsController.signUp
+  )
+  */
 
+  //mahasiswa login akun
+  app.post(
+    "/api/mhs/signin",
+    accMhsController.signIn
+  )
+  
+  //mahasiswa get data
+  app.post(
+    "/api/mhs/get_data",
+    [authJwt.verifyToken],
+    mahasiswaController.getData
+  )
+  //mahasiswa update data
+  /*
+  app.post(
+    "/api/mhs/update_data",
+    [authJwt.verifyToken],
+    mahasiswaController.updateData
+  )
+  */
+  
   //mahasiswa liat status
-  app.get(
-    "/api/mahasiswa/status",
+  app.post(
+    "/api/mhs/status",
     mahasiswaController.cekStatus
   )
 };

@@ -38,9 +38,12 @@ exports.getIsDatabaseOnline = (req,res) => {
 }
 
 exports.getIsServerOnline = (req, res) => {
-    res.status(200).send("MXM 21 Oprec - NodeJS Server Is Up and Running");
+    res.status(200).send({ message: "MXM 21 Oprec - NodeJS Server Is Up and Running"});
 };
 
+exports.tesAPIKey = (req,res) => {
+    res.status(200).send({ message: "Authorized API key received. "})
+}
 /*
 exports.viewErrorLogs = (req, res) => {
     ErrorLogs.findAll({

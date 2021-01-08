@@ -1,10 +1,13 @@
 const Technical = require("../../controllers/technical/technical.controller");
+const authJwt = require("../../middleware/authJwt");
+const GSheetsController = require("../../controllers/mahasiswa/gSheets.controller");
+const PDFController = require("../../controllers/mahasiswa/pdfDownload.controller");
 
 module.exports = function(app) {
     app.use(function(req, res, next) {
       res.header(
         "Access-Control-Allow-Headers",
-        "x-access-token, Origin, Content-Type, Accept"
+        "Bearer, x-api-key, Origin, Content-Type, Accept"
       );
       next();
     });
@@ -19,73 +22,19 @@ module.exports = function(app) {
         Technical.getIsServerOnline
     )
     
-    /*
-    app.post(
-      "/api/tech/get_array",
-      Technical.getArray
-    )
-    
-
     app.get(
-      "/api/test/all", 
-      tesController.allAccess
-    );
-
-    app.get(
-      "/api/test/maba",
-      [authJwt.verifyToken],
-      tesController.mabaBoard
-    );
-
-    app.get(
-      "/api/test/ukm",
-      [authJwt.verifyToken, authJwt.isUKM],
-      tesController.ukmBoard
-    )
-  
-    app.get(
-      "/api/test/panitia",
-      [authJwt.verifyToken, authJwt.isPanitia],
-      tesController.panitiaBoard
-    );
-
-    app.get(
-      "/api/test/acara",
-      [authJwt.verifyToken, authJwt.isAcara],
-      tesController.acaraBoard
-    )
-
-    app.get(
-      "/api/test/bph",
-      [authJwt.verifyToken, authJwt.isBPH],
-      tesController.bphBoard
-    )
-  
-    app.get(
-      "/api/test/admin",
-      [authJwt.verifyToken, authJwt.isAdmin],
-      tesController.adminBoard
-    );
-  
-    app.get(
-      "/api/test/AdminPanit",
-      [authJwt.verifyToken, authJwt.isPanitiaOrAdmin],
-      tesController.panitAdminBoard
-    );
-    
-    app.get(
-      "/api/tech/error_logs",
-      Technical.viewErrorLogs
+        "/api/tech/api_key",
+        [authJwt.verifyAPIKey],
+        Technical.tesAPIKey
     )
 
     app.post(
-      "/api/tech/regis_state",
-      Technical.registerState
+      "/api/tes/gsheets",
+      GSheetsController.tesRun
     )
 
-    app.post(
-      "/api/tech/email_test",
-      MailController.welcomeEmail
+    app.get(
+      "/api/tes/pdf_create/:nim",
+      PDFController.downloadPDF
     )
-    */
   };
