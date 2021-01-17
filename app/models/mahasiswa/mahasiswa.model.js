@@ -64,6 +64,9 @@ module.exports = (sequelize, Sequelize) => {
     soal3: {
       type: Sequelize.TEXT
     },
+    pdfLink: {
+      type: Sequelize.STRING
+    },
     lastUpdatedBy: {
       type: Sequelize.INTEGER
     }

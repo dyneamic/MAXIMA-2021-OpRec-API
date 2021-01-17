@@ -3,6 +3,9 @@ const Mahasiswa = db.mahasiswa;
 const Divisi = db.divisi;
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
+//GCP Cloud Storage
+const { Storage } = require('@google-cloud/storage');
+const storage = new Storage({ keyFilename: './app/controllers/mahasiswa/gcloud-storage.json' });
 
 //tambahan
 let endOfOne = 0;
@@ -40,8 +43,16 @@ function formatTanggalCetak(date) {
 
   if (day < 10) day = '0' + day;
   if (month < 10) month = '0' + month;
+
+  let hours = date.getHours();
+  let mins = date.getMinutes() + 1;
+  let secs = date.getSeconds();
+
+  if (hours < 10) hours = '0' + hours;
+  if (mins < 10) mins = '0' + mins;
+  if (secs < 10) secs = '0' + secs;
   
-  return day + "/" + month + "/" + year + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+  return day + "/" + month + "/" + year + " " + hours + ":" + mins + ":" + secs;
 }
 
 function formatTanggalLahir(date) {
@@ -202,9 +213,9 @@ function generateFooter(doc) {
     );
 }
 
-function createPDF(path, response) {
+function createPDF(path, response, nim_param, express_res) {
   let doc = new PDFDocument({ size: "A4", margin: 50 });
-
+  //doc.pipe(fs.createWriteStream(path));
   generateHeader(doc);
   generateTopInformation(doc, response);
   generateSecondInformation(doc, response);
@@ -213,8 +224,30 @@ function createPDF(path, response) {
   //generateInvoiceTable(doc, invoice);
   generateFooter(doc);
 
+  doc.pipe(fs.createWriteStream(path))
+    .on('finish', async () => {
+      // Replace with your bucket name and filename.
+      const bucketname = 'oprec-mxm-2021';
+
+      const res_bucket = await storage.bucket(bucketname).upload(path);
+      // `mediaLink` is the URL for the raw contents of the file.
+      let pdf_url = res_bucket[0].metadata.mediaLink;
+      console.log('PDF closed');
+      Mahasiswa.update(
+        {
+          pdfLink: pdf_url
+        },
+        {
+          where: {
+            nim: nim_param
+          }
+        }
+      )
+      .then(() => {
+        express_res.download(path);
+      })
+    });
   doc.end();
-  doc.pipe(fs.createWriteStream(path));
 }
 
 exports.downloadPDF = (req,res) => {
@@ -231,11 +264,12 @@ exports.downloadPDF = (req,res) => {
       }
     ]
   })
-  .then((response) => {
+  .then(async (response) => {
     response = response[0];
-    const path = "./app/controllers/mahasiswa/pdf_files/test.pdf";
-    createPDF(path, response);
-    res.status(200).json(response);
+    const path = "./app/controllers/mahasiswa/pdf_files/";
+    const unique_file = response.nim + "-" + response.name + ".pdf";
+    let final_path = path + unique_file;
+    createPDF(final_path, response, nim, res);
     //res.status(200).sendFile(path);
   });
   
