@@ -2,6 +2,7 @@ const Technical = require("../../controllers/technical/technical.controller");
 const authJwt = require("../../middleware/authJwt");
 const GSheetsController = require("../../controllers/mahasiswa/gSheets.controller");
 const PDFController = require("../../controllers/mahasiswa/pdfDownload.controller");
+const MhsController = require("../../controllers/mahasiswa/mahasiswa.controller");
 
 module.exports = function(app) {
     app.use(function(req, res, next) {
@@ -35,6 +36,16 @@ module.exports = function(app) {
 
     app.get(
       "/api/tes/pdf_create/:nim",
-      PDFController.downloadPDF
+      PDFController.mainCreatePDF
+    )
+
+    app.post(
+      "/api/tes/dl_pdf",
+      MhsController.downloadPDF
+    )
+
+    app.post(
+      "/api/tes/temp_pdf",
+      PDFController.createTempPDF
     )
   };

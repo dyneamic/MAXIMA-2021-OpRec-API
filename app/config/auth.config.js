@@ -1,4 +1,4 @@
 module.exports = {
-  secret: "mxm21-oprec-authorization",
-  APIKey: "mxm21-oprec-key"
+  secret: process.env.AUTH_JWT,
+  APIKey: process.env.AUTH_API_KEY
 };

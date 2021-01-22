@@ -46,9 +46,6 @@ module.exports = (sequelize, Sequelize) => {
     ips: {
       type: Sequelize.FLOAT
     },
-    whatsapp: {
-      type: Sequelize.STRING
-    },
     uLine: {
       type: Sequelize.STRING
     },

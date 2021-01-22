@@ -1,6 +1,7 @@
 const { authJwt } = require("../../middleware");
 const accMhsController = require("../../controllers/mahasiswa/accMhs.controller");
 const mahasiswaController = require("../../controllers/mahasiswa/mahasiswa.controller");
+const PDFController = require("../../controllers/mahasiswa/pdfDownload.controller");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -17,38 +18,27 @@ module.exports = function(app) {
     mahasiswaController.SignUp
   )
   
-  /*
-  //mahasiswa daftar akun
-  app.post(
-    "/api/mhs/signup",
-    accMhsController.signUp
-  )
-  */
-
-  //mahasiswa login akun
-  app.post(
-    "/api/mhs/signin",
-    accMhsController.signIn
-  )
-  
   //mahasiswa get data
   app.post(
-    "/api/mhs/get_data",
-    [authJwt.verifyToken],
-    mahasiswaController.getData
+    "/api/mhs/verify",
+    mahasiswaController.uniqueCheck
   )
-  //mahasiswa update data
-  /*
-  app.post(
-    "/api/mhs/update_data",
-    [authJwt.verifyToken],
-    mahasiswaController.updateData
-  )
-  */
   
   //mahasiswa liat status
   app.post(
     "/api/mhs/status",
     mahasiswaController.cekStatus
+  )
+
+  //mahasiswa liat pdf
+  app.post(
+    "/api/mhs/pdf_download",
+    mahasiswaController.downloadPDF
+  )
+  
+  //pdf sementara
+  app.post(
+    "/api/mhs/pdf_temp",
+    PDFController.createTempPDF
   )
 };

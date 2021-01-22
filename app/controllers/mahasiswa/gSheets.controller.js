@@ -3,6 +3,43 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 const doc = new GoogleSpreadsheet('1QKgm8uPbHqZhAVTWlITczJ43q8gceVGuYYpnF06qHXI');
 const creds = require("./key.json");
 
+const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+function formatTanggalCetak(date) {
+  let day = date.getDate();
+  //let month = date.getMonth() + 1;
+  let month = monthNames[date.getMonth()];
+  let year = date.getFullYear();
+
+  if (day < 10) day = '0' + day;
+  if (month < 10) month = '0' + month;
+
+  let hours = date.getHours();
+  let mins = date.getMinutes() + 1;
+  let secs = date.getSeconds();
+
+  if (hours < 10) hours = '0' + hours;
+  if (mins < 10) mins = '0' + mins;
+  if (secs < 10) secs = '0' + secs;
+  
+  return day + " " + month + " " + year + " " + hours + ":" + mins + ":" + secs;
+}
+
+
+function formatTanggalLahir(old_date) {
+  let date = new Date(old_date);
+  let day = date.getDate();
+  let month = monthNames[date.getMonth()];
+  let year = date.getFullYear();
+
+  if (day < 10) day = '0' + day;
+  if (month < 10) month = '0' + month;
+  
+  return day + " " + month + " " + year;
+}
+
 exports.tesRun = async (mhs) => {
   // Initialize the sheet - doc ID is the long id in the sheets URL
   
@@ -23,7 +60,7 @@ exports.tesRun = async (mhs) => {
     });
 
     sheet.addRow({
-      "Date": new Date(),
+      "Date": formatTanggalCetak(new Date()),
       "NIM": mhs.nim,
       "Name": mhs.name,
       "Email": mhs.email,
@@ -31,14 +68,13 @@ exports.tesRun = async (mhs) => {
       "No_HP": mhs.no_hp,
       "Token": mhs.token,
       "Tempat_Lahir": mhs.tempat_lahir,
-      "Tanggal_Lahir": mhs.tanggal_lahir,
+      "Tanggal_Lahir": formatTanggalLahir(mhs.tanggal_lahir),
       "Jenis_Kelamin": mhs.jenis_kelamin,
       "Alamat": mhs.alamat,
       "Angkatan": mhs.angkatan,
       "Fakultas": mhs.fakultas,
       "Prodi": mhs.prodi,
       "IPS": mhs.ips,
-      "Whatsapp": mhs.whatsapp,
       "uLine": mhs.uLine,
       "uInstagram": mhs.uInstagram,
       "Soal1": mhs.soal1,
