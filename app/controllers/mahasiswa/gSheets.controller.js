@@ -72,7 +72,6 @@ exports.tesRun = async (mhs) => {
       "Jenis_Kelamin": mhs.jenis_kelamin,
       "Alamat": mhs.alamat,
       "Angkatan": mhs.angkatan,
-      "Fakultas": mhs.fakultas,
       "Prodi": mhs.prodi,
       "IPS": mhs.ips,
       "uLine": mhs.uLine,

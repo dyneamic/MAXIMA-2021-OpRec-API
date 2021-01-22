@@ -81,7 +81,7 @@ exports.cekStatus = (req,res) => {
 }
 
 exports.SignUp = (req,res) => {
-  const {nim, name, email, divisiID, no_hp, token, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat, angkatan, fakultas, prodi, ips, uLine, uInstagram, soal1, soal2, soal3} = req.body;
+  const {nim, name, email, divisiID, no_hp, token, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat, angkatan, prodi, ips, uLine, uInstagram, soal1, soal2, soal3} = req.body;
   Mahasiswa.count({
     where: { 
       nim: nim
@@ -105,7 +105,6 @@ exports.SignUp = (req,res) => {
         jenis_kelamin: jenis_kelamin,
         alamat: alamat,
         angkatan: angkatan,
-        fakultas: fakultas,
         prodi: prodi,
         ips: ips,
         uLine: uLine,
@@ -119,7 +118,7 @@ exports.SignUp = (req,res) => {
           where: {
             nim: nim
           },
-          attributes: ['nim', 'name', 'email', 'no_hp', 'token', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'angkatan', 'fakultas', 'prodi', 'ips', 'uLine', 'uInstagram', 'soal1', 'soal2', 'soal3'],
+          attributes: ['nim', 'name', 'email', 'no_hp', 'token', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'angkatan', 'prodi', 'ips', 'uLine', 'uInstagram', 'soal1', 'soal2', 'soal3'],
           include: [
             {
                 model: Divisi,

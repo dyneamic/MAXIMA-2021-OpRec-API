@@ -146,8 +146,6 @@ function generateSecondInformation(doc, mhs) {
     .text(": " + mhs.alamat, 150, informationPartTwo + (multiplierSpace * count++))
     .text("Angkatan", 50, informationPartTwo + (multiplierSpace * count))
     .text(": " + mhs.angkatan, 150, informationPartTwo + (multiplierSpace * count++))
-    .text("Fakultas", 50, informationPartTwo + (multiplierSpace * count))
-    .text(": " + mhs.fakultas, 150, informationPartTwo + (multiplierSpace * count++))
     .text("Program Studi", 50, informationPartTwo + (multiplierSpace * count))
     .text(": " + mhs.prodi, 150, informationPartTwo + (multiplierSpace * count++))
     .text("IPS", 50, informationPartTwo + (multiplierSpace * count))
@@ -287,7 +285,7 @@ exports.mainCreatePDF = (nim_param) => {
     where: {
       nim: nim_param
     },
-    attributes: ['nim', 'name', 'email', 'no_hp', 'token', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'angkatan', 'fakultas', 'prodi', 'ips', 'uLine', 'uInstagram', 'soal1', 'soal2', 'soal3'],
+    attributes: ['nim', 'name', 'email', 'no_hp', 'token', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'angkatan', 'prodi', 'ips', 'uLine', 'uInstagram', 'soal1', 'soal2', 'soal3'],
     include: [
       {
           model: Divisi,
