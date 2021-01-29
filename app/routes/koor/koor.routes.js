@@ -46,6 +46,6 @@ module.exports = function(app) {
   app.post(
     "/api/koor/update_status_mhs",
     [authJwt.verifyToken, authJwt.isKoor],
-    koorController.updateStatus
+    koorController.seleksiForm
   )
 };

@@ -2,15 +2,16 @@ const db = require("../../models");
 const config = require("../../config/auth.config");
 const Koor = db.koor;
 const PassResetKoor = db.passwordResetKoor;
+const KoorLoginLog = db.KoorLoginLog;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.signUp = (req, res) => {
-  const { nim, name, email, password, divisiID } = req.body;
+  const { nim_koor, name, email, password, divisiID } = req.body;
   Koor.count({
     where: {
-      nim: nim
+      nim_koor: nim_koor
     }
   })
   .then(counts => {
@@ -19,7 +20,7 @@ exports.signUp = (req, res) => {
     }
     else {
       Koor.create({
-        nim: nim,
+        nim_koor: nim_koor,
         name: name,
         email: email,
         password: bcrypt.hashSync(password, 8),
@@ -33,9 +34,9 @@ exports.signUp = (req, res) => {
 }
 
 exports.signIn = (req,res) => {
-  const { nim, password } = req.body;
+  const { nim_koor, password } = req.body;
   Koor.findOne({
-    where: { nim: nim}
+    where: { nim_koor: nim_koor}
   })
   .then(koor => {
     if (!koor) {
@@ -54,19 +55,25 @@ exports.signIn = (req,res) => {
       });
     }
 
-    let token = jwt.sign({ nim: koor.nim, divisiID: koor.divisiID }, config.secret, {
+    let token = jwt.sign({ nim_koor: koor.nim_koor, divisiID: koor.divisiID }, config.secret, {
       expiresIn: 3600 // 1 hour
     });
 
-    res.status(200).send({
-      accessToken: token,
-      name: koor.name
+    KoorLoginLog.create({
+      nim_koor_koor: nim_koor,
+      ip_address: "1.1.1.1"
     })
+    .then(() => {
+      res.status(200).send({
+        accessToken: token,
+        name: koor.name
+      })
+    })    
   })
 }
 
-exports.createPassResetMhsOTP = (req,res) => {
-  const { nim } = req.body;
+exports.createPassResetOTP = (req,res) => {
+  const { nim_koor } = req.body;
   let randomOTP = '';
   let characters = '0123456789';
   let charactersLength = 6;
@@ -77,29 +84,29 @@ exports.createPassResetMhsOTP = (req,res) => {
   
   Koor.count({
     where: {
-      nim: nim
+      nim_koor: nim_koor
     }
   })
   .then(found0 => {
     if (found0 == 0) {
-      return res.status(404).send({ message: "NIM Not Found." });
+      return res.status(404).send({ message: "nim_koor Not Found." });
     } 
     else {
       Koor.findAll({
-        where: { nim: nim },
+        where: { nim_koor: nim_koor },
         attributes: ['email', 'name']
       })
       .then(response1 => {
         const { name, email } = response1[0];
         PassResetKoor.count({
           where: {
-            nim: nim
+            nim_koor: nim_koor
           }
         })
         .then(found1 => {
           if (found1 == 0) {
             PassResetKoor.create({
-              nim: nim,
+              nim_koor: nim_koor,
               otp: randomOTP,
               expired: 0
             })
@@ -119,7 +126,7 @@ exports.createPassResetMhsOTP = (req,res) => {
               expired: 0
             }, 
             {
-              where: { nim: nim }
+              where: { nim_koor: nim_koor }
             })
             .then(() => {
               //MailController.resetOTP(query_name, query_email, randomOTP);
@@ -133,10 +140,10 @@ exports.createPassResetMhsOTP = (req,res) => {
 }
 
 exports.resetPassword = (req, res) => {
-  const { nim, otp, password } = req.body;
+  const { nim_koor, otp, password } = req.body;
   PassResetKoor.count({
     where: {
-      nim: nim
+      nim_koor: nim_koor
     }
   })
   .then(found1 => {
@@ -145,7 +152,7 @@ exports.resetPassword = (req, res) => {
     } else {
       PassResetKoor.count({
         where: {
-          nim: nim,
+          nim_koor: nim_koor,
           otp: otp
         }
       })
@@ -156,7 +163,7 @@ exports.resetPassword = (req, res) => {
         else {
           PassResetKoor.count({
             where: {
-              nim: nim,
+              nim_koor: nim_koor,
               otp: otp,
               expired: 0
             }
@@ -173,7 +180,7 @@ exports.resetPassword = (req, res) => {
                   password: bcrypt.hashSync(password, 8)
                 },
                 {
-                  where: { nim: nim } 
+                  where: { nim_koor: nim_koor } 
                 }
               )
               .then(rowsUpdated => {
@@ -183,7 +190,7 @@ exports.resetPassword = (req, res) => {
                       expired: 1
                     },
                     {
-                      where: { nim: nim }
+                      where: { nim_koor: nim_koor }
                     }
                   )
                   .then(() => {

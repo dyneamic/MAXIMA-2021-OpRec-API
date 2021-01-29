@@ -44,6 +44,13 @@ exports.getIsServerOnline = (req, res) => {
 exports.tesAPIKey = (req,res) => {
     res.status(200).send({ message: "Authorized API key received. "})
 }
+
+exports.checkIP = (req,res) => {
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(req.headers['x-forwarded-for']);
+    console.log(req.connection.remoteAddress);
+    res.status(200).send({ message: ip});
+}
 /*
 exports.viewErrorLogs = (req, res) => {
     ErrorLogs.findAll({

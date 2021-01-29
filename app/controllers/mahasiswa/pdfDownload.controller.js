@@ -99,7 +99,7 @@ function generateTopInformation(doc, mhs, opt) {
     .text(": " + mhs.name, 150, informationPartOne)
     .font("Helvetica")
     .text("NIM", 50, informationPartOne + (multiplierSpace * count))
-    .text(": " + mhs.nim, 150, informationPartOne + (multiplierSpace * count++))
+    .text(": " + mhs.nim_mhs, 150, informationPartOne + (multiplierSpace * count++))
     .text("Email", 50, informationPartOne + (multiplierSpace * count))
     .text(": " + mhs.email, 150, informationPartOne + (multiplierSpace * count++))
     .text("Tanggal Cetak", 50, informationPartOne + (multiplierSpace * count))
@@ -244,7 +244,7 @@ function createPDF(path, response, express_res, opt) {
   doc.pipe(fs.createWriteStream(path))
     .on('finish', async () => {
       if (opt === 1) {
-        const bucketname = 'oprec-mxm-2021';
+        const bucketname = 'oprec-mxm-2021/temp';
         const res_bucket = await storage.bucket(bucketname).upload(path);
         //let pdf_url = res_bucket[0].metadata.mediaLink;
         finalize(path);
@@ -283,9 +283,9 @@ exports.mainCreatePDF = (nim_param) => {
   //const { nim } = req.params; 
   Mahasiswa.findAll({
     where: {
-      nim: nim_param
+      nim_mhs: nim_param
     },
-    attributes: ['nim', 'name', 'email', 'no_hp', 'token', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'angkatan', 'prodi', 'ips', 'uLine', 'uInstagram', 'soal1', 'soal2', 'soal3'],
+    attributes: ['nim_mhs', 'name', 'email', 'no_hp', 'token', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'angkatan', 'prodi', 'ips', 'uLine', 'uInstagram', 'soal1', 'soal2', 'soal3'],
     include: [
       {
           model: Divisi,
@@ -295,6 +295,7 @@ exports.mainCreatePDF = (nim_param) => {
   })
   .then(async (response) => {
     response = response[0];
+    response['nim'] = response.nim_mhs;
     const path = "./pdf_files/final/";
     const unique_file = response.nim + "-" + response.name + ".pdf";
     let final_path = path + unique_file;
@@ -319,7 +320,7 @@ exports.createTempPDF = (req,res) => {
     mhs['token'] = "No Token - Unregistered";
     console.log('def');
     const path = "./pdf_files/temp/";
-    const unique_file = mhs.nim + "-" + mhs.name + ".pdf";
+    const unique_file = mhs.nim_mhs + "-" + mhs.name + ".pdf";
     let final_path = path + unique_file;
     createPDF(final_path, mhs, res, 2);
     //res.status(200).send({ message: mhs });

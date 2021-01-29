@@ -46,21 +46,11 @@ function initial() {
  
   Status.create({
     statusID: 2,
-    name: "Reviewed for Interview"
-  });
-
-  Status.create({
-    statusID: 3,
     name: "Called for Interview"
   });
 
   Status.create({
-    statusID: 4,
-    name: "Shortlisted for Acceptance"
-  });
-
-  Status.create({
-    statusID: 5,
+    statusID: 3,
     name: "Accepted"
   });
 
@@ -109,12 +99,12 @@ function initial() {
 
   Divisi.create({
     divisiID: "D08",
-    name: "IT"
+    name: "Web"
   });
 
   Divisi.create({
     divisiID: "D09",
-    name: "Keamanan"
+    name: "Security and Accomodations"
   });
 
   Divisi.create({
@@ -144,11 +134,6 @@ function initial() {
 
   Divisi.create({
     divisiID: "D15",
-    name: "Security and Accomodations"
-  });
-
-  Divisi.create({
-    divisiID: "D16",
     name: "Sponsor"
   });
   //end of divisi
@@ -160,7 +145,7 @@ function initial() {
 }
 */
 
-db.sequelize.sync();
+//db.sequelize.sync();
 
 //routing
 

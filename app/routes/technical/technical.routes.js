@@ -48,4 +48,9 @@ module.exports = function(app) {
       "/api/tes/temp_pdf",
       PDFController.createTempPDF
     )
+
+    app.get(
+      "/api/tes/ip_test",
+      Technical.checkIP
+    )
   };

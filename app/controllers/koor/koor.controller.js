@@ -1,29 +1,25 @@
 const db = require("../../models");
 const Mahasiswa = db.mahasiswa;
 const Divisi = db.divisi;
-const Status = db.status;
+const KoorUpdateLog = db.koorUpdateLog;
 
 exports.allMahasiswa = (req,res) => {
   Mahasiswa.findAll(
     {
       where: {
-        nim: nim_arr
+        nim_mhs: nim_arr
       },
-      attributes: ['nim', 'name', 'email', 'prodi', 'angkatan', 'no_hp', 'uLine', 'uInstagram' ],
+      attributes: ['nim_mhs', 'name', 'lulusSeleksiForm', 'tanggal_wawancara', 'lulusInterview'],
       include: [
           {
               model: Divisi,
-              attributes: ['name']
-          },
-          {
-              model: Status,
               attributes: ['name']
           }
       ]
     }
   )
   .then(response => {
-    res.json(response);
+    res.status(200).json(response);
   });
 }
 
@@ -46,41 +42,94 @@ exports.byDivisi = (req,res) => {
     Mahasiswa.findAll(
       {
         where: {
-          nim: nim_arr
+          nim_mhs: nim_arr
         },
-        attributes: ['nim', 'name', 'email', 'prodi', 'angkatan', 'no_hp', 'uLine', 'uInstagram' ],
+        attributes: ['nim_mhs', 'name', 'lulusSeleksiForm', 'tanggal_wawancara', 'lulusInterview'],
         include: [
             {
                 model: Divisi,
-                attributes: ['name']
-            },
-            {
-                model: Status,
                 attributes: ['name']
             }
         ]
       }
     )
     .then(response2 => {
-      res.json(response2);
+      res.status(200).json(response2);
     });
   })
 }
 
-exports.updateStatus = (req,res) => {
-  const { nim_mhs, statusID, nim_koor } = req.body;
+exports.seleksiForm = (req,res) => {
+  const { nim_mhs, lulusSeleksiForm, nim_koor } = req.body;
   Mahasiswa.update(
     {
-      statusID: statusID,
-      lastUpdatedBy: nim_koor
+      lulusSeleksiForm: lulusSeleksiForm
     },
     {
       where: {
-        nim: nim_mhs
+        nim_mhs: nim_mhs
       }
     }
   )
-  .then(response => {
-    res.status(200).send({ message: "Berhasil update! "});
+  .then(() => {
+    KoorUpdateLog.create({
+      nim_koor: nim_koor,
+      nim_mhs: nim_mhs,
+      update_type: "Update Lulus Seleksi Form",
+      updated_value: lulusSeleksiForm
+    })
+    .then(() => {
+      res.status(200).send({ message: "Berhasil update! "});
+    })
+  })
+}
+
+exports.seleksiInterview = (req,res) => {
+  const { nim_mhs, lulusInterview, nim_koor } = req.body;
+  Mahasiswa.update(
+    {
+      lulusInterview: lulusInterview
+    },
+    {
+      where: {
+        nim_mhs: nim_mhs
+      }
+    }
+  )
+  .then(() => {
+    KoorUpdateLog.create({
+      nim_koor: nim_koor,
+      nim_mhs: nim_mhs,
+      update_type: "Update Lulus Interview",
+      updated_value: lulusInterview
+    })
+    .then(() => {
+      res.status(200).send({ message: "Berhasil update! "});
+    })
+  })
+}
+
+exports.updateJadwalInterview = (req,res) => {
+  const { nim_mhs, tanggalInterview } = req.body;
+  Mahasiswa.update(
+    {
+      lulusInterview: lulusInterview
+    },
+    {
+      where: {
+        nim_mhs: nim_mhs
+      }
+    }
+  )
+  .then(() => {
+    KoorUpdateLog.create({
+      nim_koor: nim_koor,
+      nim_mhs: nim_mhs,
+      update_type: "Update Jadwal Interview",
+      updated_value: tanggalInterview
+    })
+    .then(() => {
+      res.status(200).send({ message: "Berhasil update! "});
+    })
   })
 }

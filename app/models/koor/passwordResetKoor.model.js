@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const KoorPasswordReset = sequelize.define("koor_password_reset", {
-      nim: {
+      nim_koor: {
           type: Sequelize.INTEGER,
           primaryKey: true
       },

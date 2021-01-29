@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const Mahasiswa = sequelize.define("mahasiswa", {
-    nim: {
+    nim_mhs: {
       type: Sequelize.INTEGER,
       primaryKey: true
     },
@@ -13,8 +13,14 @@ module.exports = (sequelize, Sequelize) => {
     divisiID: {
       type: Sequelize.STRING
     },
-    statusID: {
-      type: Sequelize.INTEGER
+    lulusSeleksiForm: {
+      type: Sequelize.BOOLEAN
+    },
+    tanggal_wawancara: {
+      type: Sequelize.DATE
+    },
+    lulusInterview: {
+      type: Sequelize.BOOLEAN
     },
     no_hp: {
       type: Sequelize.STRING
@@ -63,9 +69,6 @@ module.exports = (sequelize, Sequelize) => {
     },
     pdfLink: {
       type: Sequelize.STRING
-    },
-    lastUpdatedBy: {
-      type: Sequelize.INTEGER
     }
   });
 

@@ -27,7 +27,7 @@ module.exports = function(app) {
   //mahasiswa liat status
   app.post(
     "/api/mhs/status",
-    mahasiswaController.cekStatus
+    mahasiswaController.cekStatusForm
   )
 
   //mahasiswa liat pdf

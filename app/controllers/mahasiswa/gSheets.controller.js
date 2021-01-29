@@ -61,7 +61,7 @@ exports.tesRun = async (mhs) => {
 
     sheet.addRow({
       "Date": formatTanggalCetak(new Date()),
-      "NIM": mhs.nim,
+      "NIM": mhs.nim_mhs,
       "Name": mhs.name,
       "Email": mhs.email,
       "Divisi": mhs.divisi.name,

@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const MhsPasswordReset = sequelize.define("mhs_password_reset", {
-      nim: {
+      nim_mhs: {
           type: Sequelize.INTEGER,
           primaryKey: true
       },

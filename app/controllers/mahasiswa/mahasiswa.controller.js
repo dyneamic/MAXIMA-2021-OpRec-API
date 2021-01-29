@@ -8,10 +8,10 @@ const { Storage } = require('@google-cloud/storage');
 const storage = new Storage({ keyFilename: './app/controllers/mahasiswa/gcloud-storage.json' });
 
 exports.downloadPDF = (req,res) => {
-  const { nim, token } = req.body;
+  const { nim_mhs, token } = req.body;
   Mahasiswa.count({
     where: { 
-      nim: nim,
+      nim_mhs: nim_mhs,
       token: token
     }
   })
@@ -23,14 +23,14 @@ exports.downloadPDF = (req,res) => {
       Mahasiswa.findAll(
         {
           where: {
-            nim: nim
+            nim_mhs: nim_mhs
           },
-          attributes: ['nim', 'name']
+          attributes: ['nim_mhs', 'name']
         }
       )
       .then(async (response) => {
         response = response[0];
-        let file_name = response.nim + "-" + response.name + ".pdf";
+        let file_name = response.nim_mhs + "-" + response.name + ".pdf";
         let dl_path = "./pdf_files/" + file_name;
         const options = {
           version: 'v4',
@@ -48,10 +48,10 @@ exports.downloadPDF = (req,res) => {
 }
 
 exports.uniqueCheck = (req,res) => {
-  const { nim } = req.body;
+  const { nim_mhs } = req.body;
   Mahasiswa.count({
     where: { 
-      nim: nim
+      nim_mhs: nim_mhs
     }
   })
   .then((response) => {
@@ -60,12 +60,12 @@ exports.uniqueCheck = (req,res) => {
   })
 }
 
-exports.cekStatus = (req,res) => {
-  const { nim } = req.body;
+exports.cekStatusForm = (req,res) => {
+  const { nim_mhs } = req.body;
   Mahasiswa.findOne(
     {
       where: {
-        nim: nim
+        nim_mhs: nim_mhs
       },
       attributes: ['statusID']
     }
@@ -81,10 +81,10 @@ exports.cekStatus = (req,res) => {
 }
 
 exports.SignUp = (req,res) => {
-  const {nim, name, email, divisiID, no_hp, token, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat, angkatan, prodi, ips, uLine, uInstagram, soal1, soal2, soal3} = req.body;
+  const {nim_mhs, name, email, divisiID, no_hp, token, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat, angkatan, prodi, ips, uLine, uInstagram, soal1, soal2, soal3} = req.body;
   Mahasiswa.count({
     where: { 
-      nim: nim
+      nim_mhs: nim_mhs
     }
   })
   .then((count) => {
@@ -93,11 +93,13 @@ exports.SignUp = (req,res) => {
     }
     else {
       Mahasiswa.create({
-        nim: nim,
+        nim_mhs: nim_mhs,
         name: name,
         email: email,
         divisiID: divisiID,
-        statusID: 1,
+        lulusSeleksiForm: 0,
+        tanggal_wawancara: null,
+        lulusInterview: 0,
         no_hp: no_hp,
         token: token,
         tempat_lahir: tempat_lahir,
@@ -116,9 +118,9 @@ exports.SignUp = (req,res) => {
       .then(() => {
         Mahasiswa.findAll({
           where: {
-            nim: nim
+            nim_mhs: nim_mhs
           },
-          attributes: ['nim', 'name', 'email', 'no_hp', 'token', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'angkatan', 'prodi', 'ips', 'uLine', 'uInstagram', 'soal1', 'soal2', 'soal3'],
+          attributes: ['nim_mhs', 'name', 'email', 'no_hp', 'token', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'angkatan', 'prodi', 'ips', 'uLine', 'uInstagram', 'soal1', 'soal2', 'soal3'],
           include: [
             {
                 model: Divisi,
@@ -129,7 +131,7 @@ exports.SignUp = (req,res) => {
         .then((response) => {
           response = response[0];
           gSheets.tesRun(response);
-          PDFController.mainCreatePDF(response.nim);
+          PDFController.mainCreatePDF(response.nim_mhs);
           res.status(200).send({ message: "Berhasil memasukkan data!"});
         });
       })
