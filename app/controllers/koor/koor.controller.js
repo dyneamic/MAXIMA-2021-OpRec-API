@@ -110,7 +110,7 @@ exports.seleksiInterview = (req,res) => {
 }
 
 exports.updateJadwalInterview = (req,res) => {
-  const { nim_mhs, tanggalInterview } = req.body;
+  const { nim_mhs, tanggalInterview, nim_koor } = req.body;
   Mahasiswa.update(
     {
       lulusInterview: lulusInterview
