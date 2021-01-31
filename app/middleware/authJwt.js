@@ -23,7 +23,7 @@ verifyAPIKey = (req, res, next) => {
 }
 
 verifyToken = (req, res, next) => {
-  let token = req.headers["Bearer"];
+  let token = req.headers["bearer"];
 
   if (!token) {
     return res.status(401).send({
@@ -42,33 +42,15 @@ verifyToken = (req, res, next) => {
   });
 };
 
-isKoor = (req, res, next) => {
-  Koor.findOne({
-    where: {
-      nim: req.nim
-    }
-  })
-  .then(response => {
-    if (response) {
-      next();
-      return;
-    }
-
-    res.status(403).send({
-      message: "Require Koor Role!"
-    })
-  })
-}
-
 isAdmin = (req, res, next) => {
   Koor.findAll({
     where: {
-      nim: req.nim
+      nim_koor: req.body.nim_koor
     },
     attributes: ['divisiID']
   })
   .then(response => {
-    if (response.divisiID == 'D00') {
+    if (response.divisiID === "D00") {
       next();
       return;
     }
@@ -83,17 +65,21 @@ isAdmin = (req, res, next) => {
 isAdminOrBPH = (req, res, next) => {
   Koor.findAll({
     where: {
-      nim: req.nim
+      nim_koor: req.body.nim_koor
     },
     attributes: ['divisiID']
   })
   .then(response => {
-    if (response.divisiID == 'D00') {
+    response = response[0];
+    console.log(response.divisiID);
+    if (response.divisiID === 'D00') {
+      console.log('response1');
       next();
       return;
     }
 
-    if (response.divisiID == 'D01') {
+    if (response.divisiID === 'D01') {
+      console.log('response2');
       next();
       return;
     }
@@ -108,7 +94,6 @@ isAdminOrBPH = (req, res, next) => {
 const authJwt = {
   verifyAPIKey: verifyAPIKey,
   verifyToken: verifyToken,
-  isKoor: isKoor,
   isAdmin: isAdmin,
   isAdminOrBPH: isAdminOrBPH
 };

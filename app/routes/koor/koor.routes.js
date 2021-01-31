@@ -26,26 +26,43 @@ module.exports = function(app) {
     "/api/koor/reset_pass",
     accKoorController.resetPassword
   )
+
+  app.post(
+    "/api/koor/generate_otp",
+    accKoorController.createPassResetOTP
+  )
   //end of auths
 
   //all
   app.get(
     "/api/koor/mahasiswa_all",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    [authJwt.verifyToken, authJwt.isAdminOrBPH],
     koorController.allMahasiswa
   )
 
   //per divisi
   app.get(
     "/api/koor/mahasiswa_divisi",
-    [authJwt.verifyToken, authJwt.isKoor],
+    [authJwt.verifyToken],
     koorController.byDivisi
   )
 
   //update status
   app.post(
-    "/api/koor/update_status_mhs",
-    [authJwt.verifyToken, authJwt.isKoor],
+    "/api/koor/seleksi_form",
+    [authJwt.verifyToken],
     koorController.seleksiForm
+  )
+
+  app.post(
+    "/api/koor/tanggal_interview",
+    [authJwt.verifyToken],
+    koorController.updateJadwalInterview
+  )
+  
+  app.post(
+    "/api/koor/hasil_interview",
+    [authJwt.verifyToken],
+    koorController.hasilInterview
   )
 };

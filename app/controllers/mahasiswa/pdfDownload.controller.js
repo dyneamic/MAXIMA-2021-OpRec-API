@@ -5,7 +5,7 @@ const PDFDocument = require("pdfkit");
 const fs = require("fs");
 //GCP Cloud Storage
 const { Storage } = require('@google-cloud/storage');
-const storage = new Storage({ keyFilename: './app/controllers/mahasiswa/gcloud-storage.json' });
+const storage = new Storage({ keyFilename: './keys/gcloud-storage.json' });
 
 //tambahan
 let endOfOne = 0;
@@ -76,7 +76,7 @@ function formatFileName(date) {
   if (mins < 10) mins = '0' + mins;
   if (secs < 10) secs = '0' + secs;
   
-  return day + " " + month + " " + year + " " + hours + ":" + mins + ":" + secs;
+  return day + month + year + "_" + hours + mins + secs;
 }
 
 
@@ -262,9 +262,11 @@ function finalize(path) {
 }
 
 function createPDF(path, response, express_res, opt) {
+  let file_name = '';
   //tes
   if (opt === 2) {
-    path = path + response.nim_mhs + "-" + response.name + ".pdf";
+    file_name = formatFileName(new Date()) + "_" + response.nim_mhs + "-" + response.name + ".pdf";
+    path = path + file_name;
   }
 
   let doc = new PDFDocument({ size: "A4", margin: 50 });
@@ -272,8 +274,6 @@ function createPDF(path, response, express_res, opt) {
   generateTopInformation(doc, response, opt);
   generateSecondInformation(doc, response);
   generateResponseInformation(doc, response);
-  //generateCustomerInformation(doc, invoice);
-  //generateInvoiceTable(doc, invoice);
   generateFooter(doc);
 
   doc.pipe(fs.createWriteStream(path))
@@ -285,13 +285,19 @@ function createPDF(path, response, express_res, opt) {
         finalize(path);
       }
       else if (opt === 2) {
-        const bucketname = 'oprec-mxm-2021-temp';
+        const bucketname = 'oprec-mxm-21-temp';
         const res_bucket = await storage.bucket(bucketname).upload(path);
-
-        express_res.download(path);
+        const options = {
+          version: 'v4',
+          action: 'read',
+          expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+          //destination: dl_path
+        };
+        const [ url ] = await storage.bucket(bucketname).file(file_name).getSignedUrl(options);
         finalize(path);
+        express_res.status(200).send({ message: url });
+        //express_res.download(path);
       }
-      // Replace with your bucket name and filename.
     });
   doc.end();
 }

@@ -1,7 +1,7 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 const doc = new GoogleSpreadsheet('1QKgm8uPbHqZhAVTWlITczJ43q8gceVGuYYpnF06qHXI');
-const creds = require("./key.json");
+const creds = require('../../../keys/gsheets-api.json');
 
 const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
   "Juli", "Agustus", "September", "Oktober", "November", "Desember"

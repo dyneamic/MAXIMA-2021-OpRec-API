@@ -6,9 +6,6 @@ const KoorUpdateLog = db.koorUpdateLog;
 exports.allMahasiswa = (req,res) => {
   Mahasiswa.findAll(
     {
-      where: {
-        nim_mhs: nim_arr
-      },
       attributes: ['nim_mhs', 'name', 'lulusSeleksiForm', 'tanggal_wawancara', 'lulusInterview'],
       include: [
           {
@@ -30,15 +27,14 @@ exports.byDivisi = (req,res) => {
       where: { 
         divisiID: divisiID
       },
-      attributes: ['nim']
+      attributes: ['nim_mhs']
     }
   )
   .then(response1 => {
     let nim_arr = [];
     for (i = 0; i < response1.length; i++) {
-      nim_arr[i] = parseInt(response1[i].nim);
+      nim_arr[i] = parseInt(response1[i].nim_mhs);
     }
-   
     Mahasiswa.findAll(
       {
         where: {
@@ -84,7 +80,7 @@ exports.seleksiForm = (req,res) => {
   })
 }
 
-exports.seleksiInterview = (req,res) => {
+exports.hasilInterview = (req,res) => {
   const { nim_mhs, lulusInterview, nim_koor } = req.body;
   Mahasiswa.update(
     {
@@ -110,10 +106,10 @@ exports.seleksiInterview = (req,res) => {
 }
 
 exports.updateJadwalInterview = (req,res) => {
-  const { nim_mhs, tanggalInterview, nim_koor } = req.body;
+  const { nim_mhs, tanggal_wawancara, nim_koor } = req.body;
   Mahasiswa.update(
     {
-      lulusInterview: lulusInterview
+      tanggal_wawancara: tanggal_wawancara
     },
     {
       where: {
@@ -126,7 +122,7 @@ exports.updateJadwalInterview = (req,res) => {
       nim_koor: nim_koor,
       nim_mhs: nim_mhs,
       update_type: "Update Jadwal Interview",
-      updated_value: tanggalInterview
+      updated_value: tanggal_wawancara
     })
     .then(() => {
       res.status(200).send({ message: "Berhasil update! "});

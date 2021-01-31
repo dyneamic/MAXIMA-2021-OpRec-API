@@ -2,13 +2,29 @@ const db = require("../../models");
 const config = require("../../config/auth.config");
 const Koor = db.koor;
 const PassResetKoor = db.passwordResetKoor;
-const KoorLoginLog = db.KoorLoginLog;
+const KoorLoginLog = db.koorLoginLog;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
+function getIP(req) {
+  let ip = req.headers['x-forwarded-for'];
+  if (!ip) return ip;
+  else return "unknown";
+}
+
+function generateOTP() {
+  let randomOTP = '';
+  let characters = '0123456789';
+  let charactersLength = 6;
+  for ( var i = 0; i < 6; i++ ) {
+    randomOTP += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return randomOTP;
+}
+
 exports.signUp = (req, res) => {
-  const { nim_koor, name, email, password, divisiID } = req.body;
+  const { nim_koor, name, divisiID } = req.body;
   Koor.count({
     where: {
       nim_koor: nim_koor
@@ -22,11 +38,15 @@ exports.signUp = (req, res) => {
       Koor.create({
         nim_koor: nim_koor,
         name: name,
-        email: email,
-        password: bcrypt.hashSync(password, 8),
+        password: null,
         divisiID: divisiID
       })
-      .then(response => {
+      .then(() => {
+        PassResetKoor.create({
+          nim_koor: nim_koor,
+          otp: generateOTP(),
+          expired: 0
+        })
         res.status(200).send({ message: "Berhasil mendaftar! "});
       });
     }
@@ -35,6 +55,9 @@ exports.signUp = (req, res) => {
 
 exports.signIn = (req,res) => {
   const { nim_koor, password } = req.body;
+  if (!password) {
+    return res.status(403).send({ message: "Please enter password." });
+  }
   Koor.findOne({
     where: { nim_koor: nim_koor}
   })
@@ -49,10 +72,17 @@ exports.signIn = (req,res) => {
     );
 
     if (!passwordIsValid) {
-      return res.status(401).send({
-        accessToken: null,
-        message: "Invalid Password!"
-      });
+      return KoorLoginLog.create({
+        nim_koor: nim_koor,
+        ip_address: getIP(req),
+        result: "Invalid Password"
+      })
+      .then(() => {
+        res.status(401).send({
+          accessToken: null,
+          message: "Invalid Password!"
+        });
+      })    
     }
 
     let token = jwt.sign({ nim_koor: koor.nim_koor, divisiID: koor.divisiID }, config.secret, {
@@ -60,8 +90,9 @@ exports.signIn = (req,res) => {
     });
 
     KoorLoginLog.create({
-      nim_koor_koor: nim_koor,
-      ip_address: "1.1.1.1"
+      nim_koor: nim_koor,
+      ip_address: getIP(req),
+      result: "Successful Login"
     })
     .then(() => {
       res.status(200).send({
@@ -74,66 +105,27 @@ exports.signIn = (req,res) => {
 
 exports.createPassResetOTP = (req,res) => {
   const { nim_koor } = req.body;
-  let randomOTP = '';
-  let characters = '0123456789';
-  let charactersLength = 6;
-  for ( var i = 0; i < 6; i++ ) {
-    randomOTP += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  console.log(randomOTP);
-  
   Koor.count({
     where: {
       nim_koor: nim_koor
     }
   })
   .then(found0 => {
-    if (found0 == 0) {
-      return res.status(404).send({ message: "nim_koor Not Found." });
+    if (found0 === 0) {
+      return res.status(404).send({ message: "NIM Not Found." });
     } 
     else {
-      Koor.findAll({
-        where: { nim_koor: nim_koor },
-        attributes: ['email', 'name']
-      })
-      .then(response1 => {
-        const { name, email } = response1[0];
-        PassResetKoor.count({
-          where: {
-            nim_koor: nim_koor
-          }
-        })
-        .then(found1 => {
-          if (found1 == 0) {
-            PassResetKoor.create({
-              nim_koor: nim_koor,
-              otp: randomOTP,
-              expired: 0
-            })
-            .then(function(response) {
-              //MailController.resetOTP(name, email, randomOTP);
-              res.status(200).send({ message: "OTP Berhasil Dibuat! "});
-            })
-            .catch(err => {
-              kode_error = 530405;
-              techControl.addErrorLog(kode_error, "Controller", "User", "Create OTP", err.message);
-              res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
-            });
-          } 
-          else {
-            PassResetKoor.update({
-              otp: randomOTP,
-              expired: 0
-            }, 
-            {
-              where: { nim_koor: nim_koor }
-            })
-            .then(() => {
-              //MailController.resetOTP(query_name, query_email, randomOTP);
-              res.status(200).send({ message: "OTP Berhasil Dibuat! "});
-            })
-          }
-        })
+      PassResetKoor.update(
+        {
+          otp: generateOTP(),
+          expired: 0
+        }, 
+        {
+          where: { nim_koor: nim_koor }
+        }
+      )
+      .then(() => {
+        res.status(200).send({ message: "OTP Berhasil Dibuat! "});
       })
     }
   })
@@ -147,9 +139,10 @@ exports.resetPassword = (req, res) => {
     }
   })
   .then(found1 => {
-    if (found1 == 0) {
+    if (found1 === 0) {
       return res.status(403).send({ message: "Password Reset Request Not Found." });
-    } else {
+    } 
+    else {
       PassResetKoor.count({
         where: {
           nim_koor: nim_koor,
@@ -157,7 +150,7 @@ exports.resetPassword = (req, res) => {
         }
       })
       .then(found2 => {
-        if (found2 == 0) {
+        if (found2 === 0) {
           return res.status(403).send({ message: "Invalid OTP." });
         }
         else {
@@ -170,7 +163,7 @@ exports.resetPassword = (req, res) => {
           }).
           then(found3 => {
             //cek apakah otp expired
-            if (found3 == 0) {
+            if (found3 === 0) {
               return res.status(403).send({ message: "OTP Expired." });
             }
             else {
@@ -183,20 +176,18 @@ exports.resetPassword = (req, res) => {
                   where: { nim_koor: nim_koor } 
                 }
               )
-              .then(rowsUpdated => {
-                if (rowsUpdated == 1) {
-                  PassResetKoor.update(
-                    {
-                      expired: 1
-                    },
-                    {
-                      where: { nim_koor: nim_koor }
-                    }
-                  )
-                  .then(() => {
-                    return res.status(200).send({ message: "Password Updated." });
-                  })
-                }
+              .then(() => {
+                PassResetKoor.update(
+                  {
+                    expired: 1
+                  },
+                  {
+                    where: { nim_koor: nim_koor }
+                  }
+                )
+                .then(() => {
+                  return res.status(200).send({ message: "Password Updated." });
+                })
               })
             }
           })

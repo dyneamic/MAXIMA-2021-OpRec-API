@@ -28,27 +28,7 @@ module.exports = function(app) {
         [authJwt.verifyAPIKey],
         Technical.tesAPIKey
     )
-
-    app.post(
-      "/api/tes/gsheets",
-      GSheetsController.tesRun
-    )
-
-    app.get(
-      "/api/tes/pdf_create/:nim",
-      PDFController.mainCreatePDF
-    )
-
-    app.post(
-      "/api/tes/dl_pdf",
-      MhsController.downloadPDF
-    )
-
-    app.post(
-      "/api/tes/temp_pdf",
-      PDFController.createTempPDF
-    )
-
+    
     app.get(
       "/api/tes/ip_test",
       Technical.checkIP

@@ -5,7 +5,7 @@ const gSheets = require("./gSheets.controller");
 const PDFController = require("./pdfDownload.controller");
 //GCP Cloud Storage
 const { Storage } = require('@google-cloud/storage');
-const storage = new Storage({ keyFilename: './app/controllers/mahasiswa/gcloud-storage.json' });
+const storage = new Storage({ keyFilename: './keys/gcloud-storage.json' });
 
 exports.downloadPDF = (req,res) => {
   const { nim_mhs, token } = req.body;
@@ -67,15 +67,16 @@ exports.cekStatusForm = (req,res) => {
       where: {
         nim_mhs: nim_mhs
       },
-      attributes: ['statusID']
+      attributes: ['lulusSeleksiForm', 'tanggal_wawancara']
     }
   )
   .then(response => {
     if (!response) res.status(200).send({ message: "NIM tidak ditemukan. Coba cek lagi?"});
     else {
-      let statusID = response.statusID;
-      if (statusID < 3) res.status(200).send({ message: "Formulir pendaftaran anda telah diterima dan sedang direview."});
-      else if (statusID === 3) res.status(200).send({ message: "Anda diterima untuk interview! Silakan mengecek email anda! "});
+      let status = response.lulusSeleksiForm;
+      let tanggal = response.tanggal_wawancara;
+      if (status === true) res.status(200).send({ message: `Anda lulus ke tahap interview pada tanggal_wawancara ${tanggal}`});
+      else res.status(200).send({ message: "Maaf, anda belum diterima. Jangan berkecil hati! Sampai bertemu di kesempatan selanjutnya."});
     }
   })
 }

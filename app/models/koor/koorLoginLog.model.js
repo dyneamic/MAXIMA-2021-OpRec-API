@@ -10,6 +10,9 @@ module.exports = (sequelize, Sequelize) => {
     },
     ip_address: {
       type: Sequelize.STRING
+    },
+    result: {
+      type: Sequelize.STRING
     }
   });
 
