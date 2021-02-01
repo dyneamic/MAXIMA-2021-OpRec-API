@@ -14,6 +14,8 @@ const multiplierSpace = 15;
 const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
   "Juli", "Agustus", "September", "Oktober", "November", "Desember"
   ];
+
+const shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 //end of tambahan
 
 function generateHeader(doc) {
@@ -62,7 +64,7 @@ function formatTanggalCetak(date) {
 function formatFileName(date) {
   let day = date.getDate();
   //let month = date.getMonth() + 1;
-  let month = monthNames[date.getMonth()];
+  let month = shortMonthNames[date.getMonth()];
   let year = date.getFullYear();
 
   if (day < 10) day = '0' + day;
@@ -124,7 +126,7 @@ function generateTopInformation(doc, mhs, opt) {
     .text(": " + mhs.name, 150, informationPartOne)
     .font("Helvetica")
     .text("NIM", 50, informationPartOne + (multiplierSpace * count))
-    .text(": " + mhs.nim_mhs, 150, informationPartOne + (multiplierSpace * count++))
+    .text(": 000000" + mhs.nim_mhs, 150, informationPartOne + (multiplierSpace * count++))
     .text("Email", 50, informationPartOne + (multiplierSpace * count))
     .text(": " + mhs.email, 150, informationPartOne + (multiplierSpace * count++))
     .text("Tanggal Cetak", 50, informationPartOne + (multiplierSpace * count))
@@ -250,9 +252,26 @@ function generateFooter(doc) {
       }
     );
   
-    doc.moveDown();
-
-    doc.image("./images/mxm21_web.png", 285, doc.y, { width: 37, height: 30 })
+  doc.moveDown();
+    
+  doc.image("./images/mxm21_web.png", 285, doc.y, { width: 37, height: 30 })
+  
+  doc.moveDown();
+  curpos = doc.y + 10;
+  
+  doc
+    .fontSize(10)
+    .font('./fonts/Roboto-Light.ttf')
+    .text(
+      "Hosted on ",
+      260,
+      curpos,
+      { 
+        align: "left" //, width: 500 
+      }
+    );
+  
+  doc.image("./images/gcp_logo.png", 310, (doc.y - 24), { width: 37, height: 37 })
 }
 
 function finalize(path) {
@@ -294,8 +313,9 @@ function createPDF(path, response, express_res, opt) {
           //destination: dl_path
         };
         const [ url ] = await storage.bucket(bucketname).file(file_name).getSignedUrl(options);
-        finalize(path);
+        //finalize(path);
         express_res.status(200).send({ message: url });
+        finalize(path);
         //express_res.download(path);
       }
     });

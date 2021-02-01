@@ -99,42 +99,42 @@ function initial() {
 
   Divisi.create({
     divisiID: "D08",
-    name: "Web"
-  });
-
-  Divisi.create({
-    divisiID: "D09",
-    name: "Security and Accomodations"
-  });
-
-  Divisi.create({
-    divisiID: "D10",
     name: "Media Relations"
   });
 
   Divisi.create({
-    divisiID: "D11",
+    divisiID: "D09",
     name: "Merchandise"
   });
 
   Divisi.create({
-    divisiID: "D12",
+    divisiID: "D10",
     name: "Perlengkapan"
   });
 
   Divisi.create({
-    divisiID: "D13",
+    divisiID: "D11",
     name: "Public Relations - Publikasi"
   });
 
   Divisi.create({
-    divisiID: "D14",
+    divisiID: "D12",
     name: "Public Relations - Visual"
   });
 
   Divisi.create({
-    divisiID: "D15",
+    divisiID: "D13",
+    name: "Security and Accomodations"
+  });
+
+  Divisi.create({
+    divisiID: "D14",
     name: "Sponsor"
+  });
+
+  Divisi.create({
+    divisiID: "D15",
+    name: "Web"
   });
   //end of divisi
 
