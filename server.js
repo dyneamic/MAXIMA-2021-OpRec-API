@@ -34,29 +34,10 @@ db.sequelize.sync({force: true}).then(() => {
 });
 
 function initial() {
-  const Status = db.status;
   const Technical = db.technical;
   const Divisi = db.divisi;
 
-  //status
-  Status.create({
-    statusID: 1,
-    name: "Registered"
-  });
- 
-  Status.create({
-    statusID: 2,
-    name: "Called for Interview"
-  });
-
-  Status.create({
-    statusID: 3,
-    name: "Accepted"
-  });
-
-  //end of status
   //divisi
-
   Divisi.create({
     divisiID: "D00",
     name: "SuperAdmin"
@@ -140,10 +121,29 @@ function initial() {
 
   Technical.create({
     id: 1,
-    message: "Database is up and running."
+    value_desc: "Database Check",
+    value_message: "Database is up and running."
   });
+
+  Technical.create({
+    id: 2,
+    value_desc: "Zoom Link",
+    value_message: "no_link"
+  });
+
+  Technical.create({
+    id: 3,
+    value_desc: "Oprec Route Status",
+    value_message: "true"
+  })
+
+  Technical.create({
+    id: 4,
+    value_desc: "Koor Route Status",
+    value_message: "false"
+  })
 }
-*/
+//*/
 
 db.sequelize.sync();
 

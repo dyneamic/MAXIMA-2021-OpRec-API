@@ -1,12 +1,13 @@
 const { authJwt } = require("../../middleware");
 const koorController = require("../../controllers/koor/koor.controller");
 const accKoorController = require("../../controllers/koor/accKoor.controller");
+const { koor } = require("../../models");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
-      "Bearer, x-api-key, Origin, Content-Type, Accept"
+      "Bearer, Origin, Content-Type, Accept"
     );
     next();
   });
@@ -33,15 +34,28 @@ module.exports = function(app) {
   )
   //end of auths
 
-  //all
-  app.get(
+  //superadmin
+  app.post(
+    "/api/admin/toggle_oprec",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    koorController.updateOprecMhsStatus
+  )
+
+  app.post(
+    "/api/admin/toggle_koor",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    koorController.updateKoorStatus
+  )
+  
+  //bph
+  app.post(
     "/api/koor/mahasiswa_all",
     [authJwt.verifyToken, authJwt.isAdminOrBPH],
     koorController.allMahasiswa
   )
 
   //per divisi
-  app.get(
+  app.post(
     "/api/koor/mahasiswa_divisi",
     [authJwt.verifyToken],
     koorController.byDivisi

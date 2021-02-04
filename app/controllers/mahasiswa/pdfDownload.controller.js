@@ -240,28 +240,11 @@ function generateResponseInformation(doc, mhs) {
 
 function generateFooter(doc) {
   let curpos = doc.y + 20;
-  doc
-    .fontSize(10)
-    .font('./fonts/Montserrat-Light.ttf')
-    .text(
-      "Powered by MAXIMA 2021 - Web Division",
-      200,
-      curpos,
-      { 
-        align: "left" //, width: 500 
-      }
-    );
-  
-  doc.moveDown();
-    
-  doc.image("./images/mxm21_web.png", 285, doc.y, { width: 37, height: 30 })
-  
-  doc.moveDown();
-  curpos = doc.y + 10;
   
   doc
+  .fillColor("#424242")
     .fontSize(10)
-    .font('./fonts/Roboto-Light.ttf')
+    .font('./fonts/Roboto-Medium.ttf')
     .text(
       "Hosted on ",
       260,
@@ -270,8 +253,25 @@ function generateFooter(doc) {
         align: "left" //, width: 500 
       }
     );
-  
   doc.image("./images/gcp_logo.png", 310, (doc.y - 24), { width: 37, height: 37 })
+  doc.moveDown();
+
+  curpos = doc.y + 10;
+
+  doc
+    .fillColor("#444444")
+    .fontSize(10)
+    .font('./fonts/Montserrat-Regular.ttf')
+    .text(
+      "Powered by MAXIMA 2021 - Web Division",
+      200,
+      curpos,
+      { 
+        align: "left" //, width: 500 
+      }
+    );
+  doc.moveDown();
+  doc.image("./images/mxm21_web.png", 285, doc.y, { width: 37, height: 30 })
 }
 
 function finalize(path) {

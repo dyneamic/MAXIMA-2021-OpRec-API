@@ -9,7 +9,7 @@ var bcrypt = require("bcryptjs");
 
 function getIP(req) {
   let ip = req.headers['x-forwarded-for'];
-  if (!ip) return ip;
+  if (ip) return ip;
   else return "unknown";
 }
 
@@ -66,6 +66,10 @@ exports.signIn = (req,res) => {
       return res.status(403).send({ message: "User Not found." });
     }
 
+    if (koor.password === null) {
+      return res.status(403).send({ message: "Akun belum ada password." });
+    }
+    
     let passwordIsValid = bcrypt.compareSync(
       password,
       koor.password

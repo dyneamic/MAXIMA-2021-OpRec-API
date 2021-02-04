@@ -8,7 +8,7 @@ module.exports = function(app) {
     app.use(function(req, res, next) {
       res.header(
         "Access-Control-Allow-Headers",
-        "Bearer, x-api-key, Origin, Content-Type, Accept"
+        "Bearer, Origin, Content-Type, Accept"
       );
       next();
     });
@@ -33,4 +33,9 @@ module.exports = function(app) {
       "/api/tes/ip_test",
       Technical.checkIP
     )
+
+    //app.get(
+    //  "/api/tes/status_oprec",
+    // authJwt.statusOprec
+    //)
   };

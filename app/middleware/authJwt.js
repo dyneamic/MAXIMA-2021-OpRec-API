@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const db = require("../models");
 const Koor = db.koor;
+const Technical = db.technical;
 
 verifyAPIKey = (req, res, next) => {
   let key = req.headers["x-api-key"];
@@ -50,6 +51,7 @@ isAdmin = (req, res, next) => {
     attributes: ['divisiID']
   })
   .then(response => {
+    response = response[0];
     if (response.divisiID === "D00") {
       next();
       return;
@@ -71,7 +73,6 @@ isAdminOrBPH = (req, res, next) => {
   })
   .then(response => {
     response = response[0];
-    console.log(response.divisiID);
     if (response.divisiID === 'D00') {
       console.log('response1');
       next();
@@ -91,10 +92,49 @@ isAdminOrBPH = (req, res, next) => {
   })
 };
 
+isOprecMhsOpen = (req, res, next) => {
+  Technical.findAll({
+    where: {
+      id: 3
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    if (response.value_message === 'true') {
+      next();
+    }
+    else {
+      return res.status(503).send({ message: "Pendaftaran oprec telah ditutup! "});
+    }
+  })
+}
+
+isKoorUpdateOpen = (req, res, next) => {
+  Technical.findAll({
+    where: {
+      id: 4
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    if (response.value_message === 'true') {
+      next();
+    }
+    else {
+      return res.status(503).send({ message: "Update data telah ditutup! "});
+    }
+  })
+}
+
 const authJwt = {
   verifyAPIKey: verifyAPIKey,
   verifyToken: verifyToken,
   isAdmin: isAdmin,
-  isAdminOrBPH: isAdminOrBPH
+  isAdminOrBPH: isAdminOrBPH,
+  //toggle
+  isOprecMhsOpen: isOprecMhsOpen,
+  isKoorUpdateOpen: isKoorUpdateOpen
 };
 module.exports = authJwt;

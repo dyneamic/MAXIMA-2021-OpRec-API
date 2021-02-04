@@ -2,6 +2,7 @@ const db = require("../../models");
 const Mahasiswa = db.mahasiswa;
 const Divisi = db.divisi;
 const KoorUpdateLog = db.koorUpdateLog;
+const Technical = db.technical;
 
 exports.allMahasiswa = (req,res) => {
   Mahasiswa.findAll(
@@ -128,4 +129,75 @@ exports.updateJadwalInterview = (req,res) => {
       res.status(200).send({ message: "Berhasil update! "});
     })
   })
+}
+
+exports.statusOprec = (req,res) => {
+  Technical.findAll({
+    where: {
+      id: 3
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    let final_msg = "Status Oprec adalah " + response.value_message;
+    return res.status(200).send({ message: final_msg});
+  })
+}
+
+exports.statusKoor = (req,res) => {
+  Technical.findAll({
+    where: {
+      id: 4
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    let final_msg = "Status Update Koor adalah " + response.value_message;
+    return res.status(200).send({ message: final_msg});
+  })
+}
+
+exports.updateOprecMhsStatus = (req,res) => {
+  const opt = parseInt(req.body.toggle);
+  let new_msg = '';
+  console.log('Opt: ' + opt);
+  if (opt === 0) new_msg = 'false';
+  else if (opt === 1) new_msg = 'true';
+  Technical.update(
+    {
+      value_message: new_msg
+    },
+    {
+      where: {
+        id: 3
+      }
+    }
+  )
+  .then(() => {
+    res.status(200).send({ message: "Updated! "});
+  })
+}
+
+exports.updateKoorStatus = (req,res) => {
+  const opt = parseInt(req.body.toggle);
+  let new_msg = '';
+  console.log('Opt: ' + opt);
+  if (opt === 0) new_msg = 'false';
+  else if (opt === 1) new_msg = 'true';
+  Technical.update(
+    {
+      value_message: new_msg
+    },
+    {
+      where: {
+        id: 4
+      }
+    }
+  )
+  .then(() => {
+    res.status(200).send({ message: "Updated! "});
+  })
+  res.status(200).send({ message: "Updated! "});
 }

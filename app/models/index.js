@@ -28,10 +28,6 @@ db.sequelize = sequelize;
 db.divisi = require("../models/divisi/divisi.model")(sequelize, Sequelize);
 //end of divisi
 
-//status//
-db.status = require("../models/divisi/status.model")(sequelize, Sequelize);
-//end of status//
-
 //koor
 db.koor = require("../models/koor/koor.model")(sequelize, Sequelize);
 db.passwordResetKoor = require("../models/koor/passwordResetKoor.model")(sequelize, Sequelize);

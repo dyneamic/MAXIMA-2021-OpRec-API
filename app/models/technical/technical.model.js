@@ -4,7 +4,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         primaryKey: true
       },
-      message: {
+      value_desc: {
+        type: Sequelize.STRING
+      },
+      value_message: {
         type: Sequelize.STRING
       }
     });
