@@ -29,12 +29,14 @@ exports.checkIP = (req,res) => {
     let ip = req.headers['x-forwarded-for'];
     res.status(200).send({ "Your IP": ip});
 }
-/*
-exports.viewErrorLogs = (req, res) => {
-    ErrorLogs.findAll({
-    })
-    .then(function (response) {
-        res.json(response);
+
+//end of tes state
+exports.addErrorLog = (kode_error, bagian, subbagian, fungsi, pesan) => {
+    ErrorLogs.create({
+        error_code: kode_error,
+        section: bagian,
+        subsection: subbagian,
+        function: fungsi,
+        message: pesan
     })
 }
-*/

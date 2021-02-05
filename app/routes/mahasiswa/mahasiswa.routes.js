@@ -1,5 +1,4 @@
 const { authJwt } = require("../../middleware");
-const accMhsController = require("../../controllers/mahasiswa/accMhs.controller");
 const mahasiswaController = require("../../controllers/mahasiswa/mahasiswa.controller");
 const PDFController = require("../../controllers/mahasiswa/pdfDownload.controller");
 

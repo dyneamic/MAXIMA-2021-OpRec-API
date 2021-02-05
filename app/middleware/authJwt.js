@@ -3,6 +3,7 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const Koor = db.koor;
 const Technical = db.technical;
+const techControl = require("../controllers/technical/technical.controller");
 
 verifyAPIKey = (req, res, next) => {
   let key = req.headers["x-api-key"];
@@ -62,6 +63,11 @@ isAdmin = (req, res, next) => {
     });
     return;
   })
+  .catch(err => {
+    kode_error = 310300;
+    techControl.addErrorLog(kode_error, "Middleware", "JWT", "isAdmin", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  })
 };
 
 isAdminOrBPH = (req, res, next) => {
@@ -90,6 +96,11 @@ isAdminOrBPH = (req, res, next) => {
     });
     return;
   })
+  .catch(err => {
+    kode_error = 310400;
+    techControl.addErrorLog(kode_error, "Middleware", "JWT", "isAdminOrBPH", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  })
 };
 
 isOprecMhsOpen = (req, res, next) => {
@@ -108,6 +119,11 @@ isOprecMhsOpen = (req, res, next) => {
       return res.status(503).send({ message: "Pendaftaran oprec telah ditutup! "});
     }
   })
+  .catch(err => {
+    kode_error = 310500;
+    techControl.addErrorLog(kode_error, "Middleware", "JWT", "isOprecMhsOpen", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  })
 }
 
 isKoorUpdateOpen = (req, res, next) => {
@@ -125,6 +141,11 @@ isKoorUpdateOpen = (req, res, next) => {
     else {
       return res.status(503).send({ message: "Update data telah ditutup! "});
     }
+  })
+  .catch(err => {
+    kode_error = 310600;
+    techControl.addErrorLog(kode_error, "Middleware", "JWT", "isKoorUpdateOpen", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
 }
 

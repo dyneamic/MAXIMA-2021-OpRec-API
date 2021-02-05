@@ -46,6 +46,18 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     koorController.updateKoorStatus
   )
+
+  app.get(
+    "/api/admin/toggle_oprec_status",
+    [authJwt.verifyToken],
+    koorController.statusOprec
+  )
+
+  app.get(
+    "/api/admin/toggle_koor_status",
+    [authJwt.verifyToken],
+    koorController.statusKoor
+  )
   
   //bph
   app.post(
@@ -64,19 +76,25 @@ module.exports = function(app) {
   //update status
   app.post(
     "/api/koor/seleksi_form",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isKoorUpdateOpen],
     koorController.seleksiForm
   )
 
   app.post(
     "/api/koor/tanggal_interview",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isKoorUpdateOpen],
     koorController.updateJadwalInterview
   )
   
   app.post(
     "/api/koor/hasil_interview",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isKoorUpdateOpen],
     koorController.hasilInterview
+  )
+
+  app.post(
+    "/api/koor/update_zoom",
+    [authJwt.verifyToken, authJwt.isAdminOrBPH],
+    koorController.updateZoomLink
   )
 };

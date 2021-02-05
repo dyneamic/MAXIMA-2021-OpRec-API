@@ -1,4 +1,5 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const techControl = require("../technical/technical.controller");
 
 const doc = new GoogleSpreadsheet('1QKgm8uPbHqZhAVTWlITczJ43q8gceVGuYYpnF06qHXI');
 const creds = require('../../../keys/gsheets-api.json');
@@ -83,15 +84,9 @@ exports.tesRun = async (mhs) => {
     .then(() => {
       sheet.saveUpdatedCells();
     })
-    
-    //await insertRow.save();
-
-    // adding / removing sheets
-    //const newSheet = await doc.addSheet({ title: 'hot new sheet!' });
-    //await newSheet.delete();
-  //}
-  //finally{
-   // res.status(200).send({message: "runned!"});
-  //}
-  
+    .catch(err => {
+      kode_error = 210100;
+      techControl.addErrorLog(kode_error, "Controller", "GSheets Mahasiswa", "Create New Row", err.message);
+      res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+    })
 }

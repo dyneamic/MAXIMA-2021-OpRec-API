@@ -23,11 +23,11 @@ module.exports = function(app) {
         Technical.getIsServerOnline
     )
     
-    app.get(
-        "/api/tech/api_key",
-        [authJwt.verifyAPIKey],
-        Technical.tesAPIKey
-    )
+    //app.get(
+    //    "/api/tech/api_key",
+    //    [authJwt.verifyAPIKey],
+    //    Technical.tesAPIKey
+    //)
     
     app.get(
       "/api/tes/ip_test",

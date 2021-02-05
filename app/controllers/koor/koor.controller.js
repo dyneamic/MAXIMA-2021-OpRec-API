@@ -3,6 +3,7 @@ const Mahasiswa = db.mahasiswa;
 const Divisi = db.divisi;
 const KoorUpdateLog = db.koorUpdateLog;
 const Technical = db.technical;
+const techControl = require("../technical/technical.controller");
 
 exports.allMahasiswa = (req,res) => {
   Mahasiswa.findAll(
@@ -18,6 +19,11 @@ exports.allMahasiswa = (req,res) => {
   )
   .then(response => {
     res.status(200).json(response);
+  })
+  .catch(err => {
+    kode_error = 120100;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "All Mahasiswa", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   });
 }
 
@@ -52,7 +58,17 @@ exports.byDivisi = (req,res) => {
     )
     .then(response2 => {
       res.status(200).json(response2);
-    });
+    })
+    .catch(err => {
+      kode_error = 120201;
+      techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Mahasiswa Find All", err.message);
+      res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+    })
+  })
+  .catch(err => {
+    kode_error = 120200;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Mahasiswa Find All", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
 }
 
@@ -78,6 +94,16 @@ exports.seleksiForm = (req,res) => {
     .then(() => {
       res.status(200).send({ message: "Berhasil update! "});
     })
+    .catch(err => {
+      kode_error = 120301;
+      techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Seleksi Form", err.message);
+      res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+    })
+  })
+  .catch(err => {
+    kode_error = 120300;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Seleksi Form", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
 }
 
@@ -103,6 +129,16 @@ exports.hasilInterview = (req,res) => {
     .then(() => {
       res.status(200).send({ message: "Berhasil update! "});
     })
+    .catch(err => {
+      kode_error = 120401;
+      techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Hasil Interview", err.message);
+      res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+    })
+  })
+  .catch(err => {
+    kode_error = 120400;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Hasil Interview", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
 }
 
@@ -128,7 +164,17 @@ exports.updateJadwalInterview = (req,res) => {
     .then(() => {
       res.status(200).send({ message: "Berhasil update! "});
     })
+    .catch(err => {
+      kode_error = 120501;
+      techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Jadwal Interview", err.message);
+      res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+    })
   })
+  .catch(err => {
+    kode_error = 120500;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Jadwal Interview", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
 }
 
 exports.statusOprec = (req,res) => {
@@ -143,6 +189,11 @@ exports.statusOprec = (req,res) => {
     let final_msg = "Status Oprec adalah " + response.value_message;
     return res.status(200).send({ message: final_msg});
   })
+  .catch(err => {
+    kode_error = 120600;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Status Oprec", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
 }
 
 exports.statusKoor = (req,res) => {
@@ -157,6 +208,11 @@ exports.statusKoor = (req,res) => {
     let final_msg = "Status Update Koor adalah " + response.value_message;
     return res.status(200).send({ message: final_msg});
   })
+  .catch(err => {
+    kode_error = 120700;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Status Update Koor", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
 }
 
 exports.updateOprecMhsStatus = (req,res) => {
@@ -178,6 +234,11 @@ exports.updateOprecMhsStatus = (req,res) => {
   .then(() => {
     res.status(200).send({ message: "Updated! "});
   })
+  .catch(err => {
+    kode_error = 120800;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Status Oprec", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
 }
 
 exports.updateKoorStatus = (req,res) => {
@@ -199,5 +260,31 @@ exports.updateKoorStatus = (req,res) => {
   .then(() => {
     res.status(200).send({ message: "Updated! "});
   })
-  res.status(200).send({ message: "Updated! "});
+  .catch(err => {
+    kode_error = 120900;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Status Koor", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
+}
+
+exports.updateZoomLink = (req,res) => {
+  const { link } = req.body;
+  Technical.update(
+    {
+      value_message: link
+    },
+    {
+      where: {
+        id: 2
+      }
+    }
+  )
+  .then(() => {
+    res.status(200).send({ message: "Updated! "});
+  })
+  .catch(err => {
+    kode_error = 121000;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Zoom Link", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
 }

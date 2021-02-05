@@ -3,6 +3,7 @@ const config = require("../../config/auth.config");
 const Koor = db.koor;
 const PassResetKoor = db.passwordResetKoor;
 const KoorLoginLog = db.koorLoginLog;
+const techControl = require("../technical/technical.controller");
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -48,8 +49,18 @@ exports.signUp = (req, res) => {
           expired: 0
         })
         res.status(200).send({ message: "Berhasil mendaftar! "});
+      })
+      .catch(err => {
+        kode_error = 120101;
+        techControl.addErrorLog(kode_error, "Controller", "Account Koor", "Sign Up", err.message);
+        res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
       });
     }
+  })
+  .catch(err => {
+    kode_error = 120100;
+    techControl.addErrorLog(kode_error, "Controller", "Account Koor", "Sign Up", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   });
 }
 
@@ -86,7 +97,12 @@ exports.signIn = (req,res) => {
           accessToken: null,
           message: "Invalid Password!"
         });
-      })    
+      })
+      .catch(err => {
+        kode_error = 120202;
+        techControl.addErrorLog(kode_error, "Controller", "Account Koor", "Sign In", err.message);
+        res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+      })     
     }
 
     let token = jwt.sign({ nim_koor: koor.nim_koor, divisiID: koor.divisiID }, config.secret, {
@@ -103,7 +119,17 @@ exports.signIn = (req,res) => {
         accessToken: token,
         name: koor.name
       })
+    })
+    .catch(err => {
+      kode_error = 120201;
+      techControl.addErrorLog(kode_error, "Controller", "Account Koor", "Sign In", err.message);
+      res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
     })    
+  })
+  .catch(err => {
+    kode_error = 120200;
+    techControl.addErrorLog(kode_error, "Controller", "Account Koor", "Sign In", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
 }
 
@@ -131,7 +157,17 @@ exports.createPassResetOTP = (req,res) => {
       .then(() => {
         res.status(200).send({ message: "OTP Berhasil Dibuat! "});
       })
+      .catch(err => {
+        kode_error = 120301;
+        techControl.addErrorLog(kode_error, "Controller", "Account Koor", "Create OTP", err.message);
+        res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+      })
     }
+  })
+  .catch(err => {
+    kode_error = 120300;
+    techControl.addErrorLog(kode_error, "Controller", "Account Koor", "Create OTP", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
 }
 

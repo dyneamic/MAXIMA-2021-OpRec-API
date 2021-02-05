@@ -3,6 +3,7 @@ const Mahasiswa = db.mahasiswa;
 const Divisi = db.divisi;
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
+const techControl = require("../technical/technical.controller");
 //GCP Cloud Storage
 const { Storage } = require('@google-cloud/storage');
 const storage = new Storage({ keyFilename: './keys/gcloud-storage.json' });
@@ -338,13 +339,16 @@ exports.mainCreatePDF = (nim_param) => {
   })
   .then(async (response) => {
     response = response[0];
-    //response['nim'] = response.nim_mhs;
     const path = "./pdf_files/final/";
     const unique_file = response.nim_mhs + "-" + response.name + ".pdf";
     let final_path = path + unique_file;
     createPDF(final_path, response, null, 1);
-    //res.status(200).sendFile(path);
-  });
+  })
+  .catch(err => {
+    kode_error = 230100;
+    techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Create PDF", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  })
 }
 
 exports.createTempPDF = (req,res) => {
@@ -364,5 +368,10 @@ exports.createTempPDF = (req,res) => {
     //let final_path = path + unique_file;
     createPDF(path, mhs, res, 2);
     //res.status(200).send({ message: mhs });
+  })
+  .catch(err => {
+    kode_error = 230200;
+    techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Create Temp PDF", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
 }
