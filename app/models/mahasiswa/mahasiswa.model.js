@@ -17,7 +17,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN
     },
     tanggal_wawancara: {
-      type: Sequelize.DATE
+      type: Sequelize.STRING
     },
     lulusInterview: {
       type: Sequelize.BOOLEAN

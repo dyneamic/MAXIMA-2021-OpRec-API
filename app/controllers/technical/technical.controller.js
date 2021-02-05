@@ -10,7 +10,7 @@ exports.getIsDatabaseOnline = (req,res) => {
         where: {
             id: 1
         },
-        attributes: ['message']
+        attributes: ['value_message']
     })
     .then(function(response) {
     res.json(response);
