@@ -97,4 +97,10 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isAdminOrBPH],
     koorController.updateZoomLink
   )
+
+  app.post(
+    "/api/koor/download_pdf_mhs",
+    [authJwt.verifyToken],
+    koorController.downloadPDF
+  )
 };

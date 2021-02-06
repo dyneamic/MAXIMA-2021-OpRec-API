@@ -288,3 +288,49 @@ exports.updateZoomLink = (req,res) => {
     res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   });
 }
+
+exports.downloadPDF = (req,res) => {
+  const { nim_mhs } = req.body;
+  Mahasiswa.count({
+    where: { 
+      nim_mhs: nim_mhs
+    }
+  })
+  .then((count) => {
+    if (count < 1) {
+      res.status(403).send({ message: "NIM not found!" });
+    }
+    else {
+      Mahasiswa.findAll(
+        {
+          where: {
+            nim_mhs: nim_mhs
+          },
+          attributes: ['nim_mhs', 'name', 'createdAt']
+        }
+      )
+      .then(async (response) => {
+        response = response[0];
+        let file_name = response.nim_mhs + "-" + response.name + ".pdf";
+        const options = {
+          version: 'v4',
+          action: 'read',
+          expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+        };
+        const bucketname = 'oprec-mxm-2021';
+        const [ url ] = await storage.bucket(bucketname).file(file_name).getSignedUrl(options);
+        res.status(200).send({ message: url });
+      })  
+      .catch(err => {
+        kode_error = 121101;
+        techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Download PDF", err.message);
+        res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+      })
+    }
+  })
+  .catch(err => {
+    kode_error = 121100;
+    techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Download PDF", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  })
+}

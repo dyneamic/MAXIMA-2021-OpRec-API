@@ -13,12 +13,13 @@ exports.getIsDatabaseOnline = (req,res) => {
         attributes: ['value_message']
     })
     .then(function(response) {
-    res.json(response);
+        response = response[0];
+        res.status(200).send({ server_id: process.env.SERVER_ID_NAME, message: response.value_message });
     });
 }
 
 exports.getIsServerOnline = (req, res) => {
-    res.status(200).send({ message: "MXM 21 Oprec - NodeJS Server Is Up and Running"});
+    res.status(200).send({ server_id: process.env.SERVER_ID_NAME, message: "MXM 21 Oprec - NodeJS Server Is Up and Running"});
 };
 
 exports.tesAPIKey = (req,res) => {
