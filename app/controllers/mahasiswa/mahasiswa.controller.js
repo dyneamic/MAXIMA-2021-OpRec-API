@@ -1,11 +1,14 @@
 const db = require("../../models");
 const Mahasiswa = db.mahasiswa;
 const Divisi = db.divisi;
+const MahasiswaQueue = db.mahasiswaQueue;
+const Technical = db.technical;
 const gSheets = require("./gSheets.controller");
 const PDFController = require("./pdfDownload.controller");
 const techControl = require("../technical/technical.controller");
 //GCP Cloud Storage
 const { Storage } = require('@google-cloud/storage');
+const e = require("express");
 const storage = new Storage({ keyFilename: './keys/gcloud-storage.json' });
 
 exports.downloadPDF = (req,res) => {
@@ -88,17 +91,12 @@ exports.cekStatusForm = (req,res) => {
       where: {
         nim_mhs: nim_mhs
       },
-      attributes: ['lulusSeleksiForm', 'tanggal_wawancara']
+      attributes: ['lulusSeleksiForm', 'tanggal_wawancara', 'lulusInterview']
     }
   )
   .then(response => {
-    if (!response) res.status(200).send({ message: "NIM tidak ditemukan. Coba cek lagi?"});
-    else {
-      let status = response.lulusSeleksiForm;
-      let tanggal = response.tanggal_wawancara;
-      if (status === true) res.status(200).send({ message: `Anda lulus ke tahap interview pada tanggal_wawancara ${tanggal}`});
-      else res.status(200).send({ message: "Maaf, anda belum diterima. Jangan berkecil hati! Sampai bertemu di kesempatan selanjutnya."});
-    }
+    if (response === null) return res.status(403).send({ message: "NIM anda tidak ditemukan! Coba cek lagi?"});
+    res.status(200).send({message: response});
   })
   .catch(err => {
     kode_error = 220300;
@@ -179,4 +177,110 @@ exports.SignUp = (req,res) => {
     techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Sign Up", err.message);
     res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
+}
+
+exports.createZoomLink = async (req,res) => {
+  const { nim_mhs, token } = req.body;
+  try {
+    let zoom_link = 
+    await Technical.findAll({
+      where: {
+        id: 2
+      },
+      attributes: ['value_message']
+    });
+
+    zoom_link = zoom_link[0];
+    zoom_link = zoom_link.value_message;
+
+    const count = 
+      await Mahasiswa.count({
+        where: { 
+          nim_mhs: nim_mhs,
+          token: token
+        }
+      });
+
+    if (count === 0) {
+      return res.status(500).send({ message: "NIM dan Token tidak ditemukan." });
+    }
+    else {
+      const mhs = 
+        await Mahasiswa.findOne(
+        {
+          where: {
+            nim_mhs: nim_mhs
+          },
+          attributes: ['nim_mhs', 'name', 'divisiID', 'lulusSeleksiForm'],
+          include: [
+            {
+                model: Divisi,
+                attributes: ['name']
+            }
+          ]
+        }
+      );
+      
+      if (mhs.lulusSeleksiForm === false) return res.status(500).send({ message: "Anda tidak lulus seleksi!" });
+      else {
+        const checkedIn = 
+          await MahasiswaQueue.count({
+            where: {
+              nim_mhs: mhs.nim_mhs,
+              divisiID: mhs.divisiID
+            }
+          });
+        
+        if (checkedIn > 0) {
+          MahasiswaQueue.findOne({
+            where: {
+              nim_mhs: nim_mhs
+            },
+            attributes: ['no_urut']
+          })
+          .then((response) => {
+            let append_str = `&uName=${mhs.divisi.name}%20-%20No.${response.no_urut}%20-%20${mhs.nim}%20-%20${mhs.name}`;
+            let final_link = zoom_link + append_str;
+            return res.status(200).send({ message: final_link });
+          })
+          .catch(err => {
+            kode_error = 220502;
+            techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link", err.message);
+            res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+          })
+        }
+        else {
+          const total_antrian =
+            await MahasiswaQueue.count({
+              where: { 
+                divisiID: mhs.divisiID
+              }
+            });
+        
+          let no_antrian = total_antrian + 1;
+
+          MahasiswaQueue.create({
+            nim_mhs: mhs.nim_mhs,
+            divisiID: mhs.divisiID,
+            no_urut: no_antrian
+          })
+          .then(() => {
+            let append_str = `&uName=${mhs.divisi.name}%20-%20No.${no_antrian}%20-%20${nim_mhs}%20-%20${mhs.name}`;
+            let final_link = zoom_link + append_str;
+            res.status(200).send({ message: final_link });
+          })
+          .catch(err => {
+            kode_error = 220501;
+            techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link", err.message);
+            res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+          })
+        }
+      }
+    }
+  }
+  catch(err){
+    kode_error = 220500;
+    techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  }
 }

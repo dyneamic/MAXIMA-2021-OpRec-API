@@ -43,4 +43,10 @@ module.exports = function(app) {
     [authJwt.isOprecMhsOpen],
     PDFController.createTempPDF
   )
+
+  //check data
+  app.post(
+    "/api/mhs/zoom_link",
+    mahasiswaController.createZoomLink
+  )
 };

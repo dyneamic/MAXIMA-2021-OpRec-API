@@ -1,7 +1,5 @@
 const Technical = require("../../controllers/technical/technical.controller");
 const authJwt = require("../../middleware/authJwt");
-const GSheetsController = require("../../controllers/mahasiswa/gSheets.controller");
-const PDFController = require("../../controllers/mahasiswa/pdfDownload.controller");
 const MhsController = require("../../controllers/mahasiswa/mahasiswa.controller");
 
 module.exports = function(app) {

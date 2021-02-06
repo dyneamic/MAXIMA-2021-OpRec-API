@@ -46,11 +46,16 @@ db.koorUpdateLog.belongsTo(db.koor, { foreignKey: 'nim_koor'});
 
 //registration
 db.mahasiswa = require("../models/mahasiswa/mahasiswa.model")(sequelize, Sequelize);
-
 db.divisi.hasMany(db.mahasiswa, { foreignKey: 'divisiID'});
 db.mahasiswa.belongsTo(db.divisi, { foreignKey: 'divisiID'});
 db.mahasiswa.hasMany(db.koorUpdateLog, { foreignKey: 'nim_mhs'});
 db.koorUpdateLog.belongsTo(db.mahasiswa, { foreignKey: 'nim_mhs'});
+
+db.mahasiswaQueue = require("../models/mahasiswa/mahasiswaQueue.model")(sequelize, Sequelize);
+db.mahasiswa.hasMany(db.mahasiswaQueue, { foreignKey: 'nim_mhs'});
+db.divisi.hasMany(db.mahasiswaQueue, { foreignKey: 'divisiID'});
+db.mahasiswaQueue.belongsTo(db.mahasiswa, { foreignKey: 'nim_mhs'});
+db.mahasiswaQueue.belongsTo(db.divisi, { foreignKey: 'divisiID'});
 //end of registration
 
 //technical//

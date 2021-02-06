@@ -140,10 +140,10 @@ function initial() {
   Technical.create({
     id: 4,
     value_desc: "Koor Route Status",
-    value_message: "false"
+    value_message: "true"
   })
 }
-//*/
+*/
 
 db.sequelize.sync();
 

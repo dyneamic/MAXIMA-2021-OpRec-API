@@ -66,11 +66,17 @@ module.exports = function(app) {
     koorController.allMahasiswa
   )
 
+  app.post(
+    "/api/koor/antrian_all",
+    [authJwt.verifyToken, authJwt.isAdminOrBPH],
+    koorController.antrianMahasiswa
+  )
+
   //per divisi
   app.post(
-    "/api/koor/mahasiswa_divisi",
+    "/api/koor/antrian_divisi",
     [authJwt.verifyToken],
-    koorController.byDivisi
+    koorController.antrianByDivisi
   )
 
   //update status
