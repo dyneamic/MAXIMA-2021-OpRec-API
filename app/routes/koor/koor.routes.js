@@ -79,6 +79,12 @@ module.exports = function(app) {
     koorController.antrianByDivisi
   )
 
+  app.post(
+    "/api/koor/mahasiswa_divisi",
+    [authJwt.verifyToken],
+    koorController.byDivisi
+  )
+
   //update status
   app.post(
     "/api/koor/seleksi_form",
