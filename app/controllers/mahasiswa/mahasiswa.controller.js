@@ -202,7 +202,7 @@ exports.createZoomLink = async (req,res) => {
       });
 
     if (count === 0) {
-      return res.status(500).send({ message: "NIM dan Token tidak ditemukan." });
+      return res.status(500).send({ message: "Kombinasi NIM dan Token tidak tepat." });
     }
     else {
       const mhs = 

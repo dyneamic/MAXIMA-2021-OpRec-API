@@ -189,8 +189,7 @@ exports.statusOprec = (req,res) => {
   })
   .then((response) => {
     response = response[0];
-    let final_msg = "Status Oprec adalah " + response.value_message;
-    return res.status(200).send({ message: final_msg});
+    return res.status(200).send({ message: response.value_message});
   })
   .catch(err => {
     kode_error = 120600;
@@ -208,8 +207,7 @@ exports.statusKoor = (req,res) => {
   })
   .then((response) => {
     response = response[0];
-    let final_msg = "Status Update Koor adalah " + response.value_message;
-    return res.status(200).send({ message: final_msg});
+    return res.status(200).send({ message: response.value_message});
   })
   .catch(err => {
     kode_error = 120700;
@@ -411,4 +409,66 @@ exports.antrianByDivisi = (req,res) => {
     techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Antrian by Divisi", err.message);
     res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   })
+}
+
+exports.statusZoom = (req,res) => {
+  Technical.findAll({
+    where: {
+      id: 5
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    return res.status(200).send({ message: response.value_message});
+  })
+  .catch(err => {
+    kode_error = 121400;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Status Zoom Route", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
+}
+
+exports.updateZoomStatus = (req,res) => {
+  const opt = parseInt(req.body.toggle);
+  let new_msg = '';
+  console.log('Opt: ' + opt);
+  if (opt === 0) new_msg = 'false';
+  else if (opt === 1) new_msg = 'true';
+  Technical.update(
+    {
+      value_message: new_msg
+    },
+    {
+      where: {
+        id: 5
+      }
+    }
+  )
+  .then(() => {
+    res.status(200).send({ message: "Updated! "});
+  })
+  .catch(err => {
+    kode_error = 121500;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Zoom Route Status", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
+}
+
+exports.currentZoomLink = (req,res) => {
+  Technical.findAll({
+    where: {
+      id: 2
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    return res.status(200).send({ message: response.value_message});
+  })
+  .catch(err => {
+    kode_error = 121600;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Current Zoom Link", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
 }

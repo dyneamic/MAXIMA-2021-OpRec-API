@@ -149,6 +149,29 @@ isKoorUpdateOpen = (req, res, next) => {
   })
 }
 
+isZoomOpen = (req,res,next) => {
+  Technical.findAll({
+    where: {
+      id: 5
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    if (response.value_message === 'true') {
+      next();
+    }
+    else {
+      return res.status(503).send({ message: "Link Zoom belum dibuka!"});
+    }
+  })
+  .catch(err => {
+    kode_error = 310700;
+    techControl.addErrorLog(kode_error, "Middleware", "JWT", "isZoomOpen", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  })
+}
+
 const authJwt = {
   verifyAPIKey: verifyAPIKey,
   verifyToken: verifyToken,
@@ -156,6 +179,7 @@ const authJwt = {
   isAdminOrBPH: isAdminOrBPH,
   //toggle
   isOprecMhsOpen: isOprecMhsOpen,
-  isKoorUpdateOpen: isKoorUpdateOpen
+  isKoorUpdateOpen: isKoorUpdateOpen,
+  isZoomOpen: isZoomOpen
 };
 module.exports = authJwt;

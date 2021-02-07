@@ -78,7 +78,7 @@ exports.signIn = (req,res) => {
     }
 
     if (koor.password === null) {
-      return res.status(403).send({ message: "Akun belum ada password." });
+      return res.status(403).send({ message: "Akun belum diotorisasi. Silakan hubungi MAXIMA 2021 WebMaster." });
     }
     
     let passwordIsValid = bcrypt.compareSync(
@@ -106,7 +106,7 @@ exports.signIn = (req,res) => {
     }
 
     let token = jwt.sign({ nim_koor: koor.nim_koor, divisiID: koor.divisiID }, config.secret, {
-      expiresIn: 3600 // 1 hour
+      expiresIn: 25200 // 7 hour
     });
 
     KoorLoginLog.create({

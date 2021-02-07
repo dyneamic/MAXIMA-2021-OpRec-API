@@ -46,6 +46,12 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     koorController.updateKoorStatus
   )
+  
+  app.post(
+    "/api/admin/toggle_zoom",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    koorController.updateZoomStatus
+  )
 
   app.get(
     "/api/admin/toggle_oprec_status",
@@ -59,6 +65,11 @@ module.exports = function(app) {
     koorController.statusKoor
   )
   
+  app.get(
+    "/api/admin/toggle_zoom_status",
+    [authJwt.verifyToken],
+    koorController.statusZoom
+  )
   //bph
   app.post(
     "/api/koor/mahasiswa_all",
@@ -70,6 +81,18 @@ module.exports = function(app) {
     "/api/koor/antrian_all",
     [authJwt.verifyToken, authJwt.isAdminOrBPH],
     koorController.antrianMahasiswa
+  )
+
+  app.post(
+    "/api/koor/update_zoom",
+    [authJwt.verifyToken, authJwt.isAdminOrBPH],
+    koorController.updateZoomLink
+  )
+
+  app.post(
+    "/api/koor/current_zoom_link",
+    [authJwt.verifyToken, authJwt.isAdminOrBPH],
+    koorController.currentZoomLink
   )
 
   //per divisi
@@ -102,12 +125,6 @@ module.exports = function(app) {
     "/api/koor/hasil_interview",
     [authJwt.verifyToken, authJwt.isKoorUpdateOpen],
     koorController.hasilInterview
-  )
-
-  app.post(
-    "/api/koor/update_zoom",
-    [authJwt.verifyToken, authJwt.isAdminOrBPH],
-    koorController.updateZoomLink
   )
 
   app.post(

@@ -142,6 +142,12 @@ function initial() {
     value_desc: "Koor Route Status",
     value_message: "true"
   })
+
+  Technical.create({
+    id: 5,
+    value_desc: "Zoom Route Status",
+    value_message: "false"
+  })
 }
 */
 

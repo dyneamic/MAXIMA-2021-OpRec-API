@@ -47,6 +47,7 @@ module.exports = function(app) {
   //check data
   app.post(
     "/api/mhs/zoom_link",
+    [authJwt.isZoomOpen],
     mahasiswaController.createZoomLink
   )
 };
