@@ -150,6 +150,7 @@ function generateTopInformation(doc, mhs, opt) {
 function generateSecondInformation(doc, mhs) {
   let informationPartTwo = endOfOne;
   let count = 1;
+  let pos = 0;
 
   doc
     .fillColor("#444444")
@@ -166,33 +167,53 @@ function generateSecondInformation(doc, mhs) {
     .fontSize(10)
     .text("Tempat, Tanggal Lahir", 50, informationPartTwo + (multiplierSpace * count))
     .text(": " + mhs.tempat_lahir + ", " + formatTanggalLahir(mhs.tanggal_lahir), 150, informationPartTwo + (multiplierSpace * count++))
-    //.text("Tanggal Lahir", 50, informationPartTwo + (multiplierSpace * count))
-    //.text(": " + formatTanggalLahir(mhs.tanggal_lahir), 150, informationPartTwo + (multiplierSpace * count++))
-    .text("Jenis Kelamin", 50, informationPartTwo + (multiplierSpace * count))
-    .text(": " + mhs.jenis_kelamin, 150, informationPartTwo + (multiplierSpace * count++))
-    .text("Alamat", 50, informationPartTwo + (multiplierSpace * count))
-    .text(": " + mhs.alamat, 150, informationPartTwo + (multiplierSpace * count++))
-    .text("Angkatan / Prodi", 50, informationPartTwo + (multiplierSpace * count))
-    .text(": " + mhs.angkatan + " / " + mhs.prodi, 150, informationPartTwo + (multiplierSpace * count++))
-    //.text("Program Studi", 50, informationPartTwo + (multiplierSpace * count))
-    //.text(": " + mhs.prodi, 150, informationPartTwo + (multiplierSpace * count++))
-    .text("IPS", 50, informationPartTwo + (multiplierSpace * count))
-    .text(": " + mhs.ips, 150, informationPartTwo + (multiplierSpace * count++))
-    .text("LINE ID", 50, informationPartTwo + (multiplierSpace * count))
-    .text(": " + mhs.uLine, 150, informationPartTwo + (multiplierSpace * count++))
-    .text("Username Instagram", 50, informationPartTwo + (multiplierSpace * count))
-    .text(": " + mhs.uInstagram, 150, informationPartTwo + (multiplierSpace * count++))
     .moveDown();
+  
+  pos = doc.y;
+  doc
+    .text("Jenis Kelamin", 50, pos)
+    .text(": " + mhs.jenis_kelamin, 150, pos)
+    .moveDown()
 
-  generateHr(doc, informationPartTwo+ (multiplierSpace * count++));
+  pos = doc.y;
+  doc
+    .text("Alamat", 50, pos)
+    .text(": " + mhs.alamat, 150, pos)
+    .moveDown()
 
-  endOfTwo = informationPartTwo + (multiplierSpace * count);
+  pos = doc.y;
+  doc
+    .text("Prodi / Angkatan", 50, pos)
+    .text(": " + mhs.prodi + " / " + mhs.angkatan, 150, pos)
+    .moveDown()
+  
+  pos = doc.y;
+  doc
+    .text("IPS", 50, pos)
+    .text(": " + mhs.ips, 150, pos)
+    .moveDown()
+
+  pos = doc.y;
+  doc
+    .text("LINE ID", 50, pos)
+    .text(": " + mhs.uLine, 150, pos)
+    .moveDown()
+  
+  pos = doc.y;
+  doc
+    .text("Username Instagram", 50, pos)
+    .text(": " + mhs.uInstagram, 150, pos)
+    .moveDown()
+
+  generateHr(doc, doc.y);
+
+  endOfTwo = doc.y;
 
   doc.moveDown();
 }
 
 function generateResponseInformation(doc, mhs) {
-  let informationPartThree = endOfTwo;
+  let informationPartThree = doc.y;
 
   let count = 1;
 
@@ -202,9 +223,9 @@ function generateResponseInformation(doc, mhs) {
     .font("Helvetica-Bold")
     .text("Jawaban Esai Singkat", 50, informationPartThree)
 
-  informationPartThree = endOfTwo + 25;
+  informationPartThree = endOfTwo + 35;
   generateHr(doc, informationPartThree);
-  informationPartThree = endOfTwo + 25;
+  informationPartThree = endOfTwo + 35;
 
   doc
     .fontSize(20)
