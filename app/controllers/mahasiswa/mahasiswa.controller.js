@@ -221,7 +221,7 @@ exports.createZoomLink = async (req,res) => {
         }
       );
       
-      if (mhs.lulusSeleksiForm === false) return res.status(500).send({ message: "Anda tidak lulus seleksi!" });
+      if (mhs.lulusSeleksiForm === false) return res.status(500).send({ message: "Mohon maaf, anda tidak lulus seleksi formulir Open Recruitment MAXIMA 2021." });
       else {
         const checkedIn = 
           await MahasiswaQueue.count({
@@ -265,7 +265,7 @@ exports.createZoomLink = async (req,res) => {
             no_urut: no_antrian
           })
           .then(() => {
-            let append_str = `&uName=${mhs.divisi.name}%20-%20No.${no_antrian}%20-%20${nim_mhs}%20-%20${mhs.name}`;
+            let append_str = `&uname=${mhs.divisi.name}%20-%20No.%20${no_antrian}%20-%20${mhs.name}%20(${mhs.nim_mhs})`;
             let final_link = zoom_link + append_str;
             res.status(200).send({ message: final_link });
           })
