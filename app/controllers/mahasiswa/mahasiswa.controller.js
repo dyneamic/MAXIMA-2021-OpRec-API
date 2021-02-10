@@ -239,9 +239,9 @@ exports.createZoomLink = async (req,res) => {
             attributes: ['no_urut']
           })
           .then((response) => {
-            let append_str = `&uName=${mhs.divisi.name}%20-%20No.${response.no_urut}%20-%20${mhs.nim}%20-%20${mhs.name}`;
+            let append_str = `&uname=${mhs.divisi.name}%20-%20No.%20${no_antrian}%20-%20${mhs.name}%20(${nim_mhs})`;
             let final_link = zoom_link + append_str;
-            return res.status(200).send({ message: final_link });
+            res.status(200).send({ message: final_link });
           })
           .catch(err => {
             kode_error = 220502;
@@ -265,7 +265,7 @@ exports.createZoomLink = async (req,res) => {
             no_urut: no_antrian
           })
           .then(() => {
-            let append_str = `&uname=${mhs.divisi.name}%20-%20No.%20${no_antrian}%20-%20${mhs.name}%20(${mhs.nim_mhs})`;
+            let append_str = `&uname=${mhs.divisi.name}%20-%20No.%20${no_antrian}%20-%20${mhs.name}%20(${nim_mhs})`;
             let final_link = zoom_link + append_str;
             res.status(200).send({ message: final_link });
           })
