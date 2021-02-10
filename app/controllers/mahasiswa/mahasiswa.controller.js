@@ -239,7 +239,7 @@ exports.createZoomLink = async (req,res) => {
             attributes: ['no_urut']
           })
           .then((response) => {
-            let append_str = `&uname=${mhs.divisi.name}%20-%20No.%20${no_antrian}%20-%20${mhs.name}%20(${nim_mhs})`;
+            let append_str = `&uname=${mhs.divisi.name}%20-%20No.%20${response.no_urut}%20-%20${mhs.name}%20(${nim_mhs})`;
             let final_link = zoom_link + append_str;
             res.status(200).send({ message: final_link });
           })
