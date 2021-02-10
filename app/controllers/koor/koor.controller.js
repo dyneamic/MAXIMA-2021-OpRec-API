@@ -339,6 +339,9 @@ exports.downloadPDF = (req,res) => {
 exports.antrianMahasiswa = (req,res) => {
   MahasiswaQueue.findAll(
     {
+      order: [
+        ['no_urut', 'ASC'],
+      ],
       attributes: ['nim_mhs', 'divisiID', 'no_urut'],
       include: [
           {
@@ -382,6 +385,9 @@ exports.antrianByDivisi = (req,res) => {
         where: {
           nim_mhs: nim_arr
         },
+        order: [
+          ['no_urut', 'ASC'],
+        ],
         attributes: ['nim_mhs', 'divisiID', 'no_urut'],
         include: [
             {
