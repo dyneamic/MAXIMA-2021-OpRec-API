@@ -478,3 +478,91 @@ exports.currentZoomLink = (req,res) => {
     res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   });
 }
+
+exports.updateMahasiswaCheckForm = (req,res) => {
+  const opt = parseInt(req.body.toggle);
+  let new_msg = '';
+  console.log('Opt: ' + opt);
+  if (opt === 0) new_msg = 'false';
+  else if (opt === 1) new_msg = 'true';
+  Technical.update(
+    {
+      value_message: new_msg
+    },
+    {
+      where: {
+        id: 6
+      }
+    }
+  )
+  .then(() => {
+    res.status(200).send({ message: "Updated! "});
+  })
+  .catch(err => {
+    kode_error = 121700;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Status Mahasiswa", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
+}
+
+exports.statusMahasiswaCheckForm = (req,res) => {
+  Technical.findAll({
+    where: {
+      id: 6
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    return res.status(200).send({ message: response.value_message});
+  })
+  .catch(err => {
+    kode_error = 121800;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Current Status Mahasiswa", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
+}
+
+exports.updateLulusInterview = (req,res) => {
+  const opt = parseInt(req.body.toggle);
+  let new_msg = '';
+  console.log('Opt: ' + opt);
+  if (opt === 0) new_msg = 'false';
+  else if (opt === 1) new_msg = 'true';
+  Technical.update(
+    {
+      value_message: new_msg
+    },
+    {
+      where: {
+        id: 7
+      }
+    }
+  )
+  .then(() => {
+    res.status(200).send({ message: "Updated! "});
+  })
+  .catch(err => {
+    kode_error = 121900;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Update Status Lulus Interview", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
+}
+
+exports.statusLulusInterview = (req,res) => {
+  Technical.findAll({
+    where: {
+      id: 7
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    return res.status(200).send({ message: response.value_message});
+  })
+  .catch(err => {
+    kode_error = 122000;
+    techControl.addErrorLog(kode_error, "Controller", "Koor CRUD", "Current Status Lulus Interview", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  });
+}

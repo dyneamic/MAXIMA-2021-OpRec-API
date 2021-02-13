@@ -172,6 +172,52 @@ isZoomOpen = (req,res,next) => {
   })
 }
 
+isMahasiswaCheckOpen = (req,res,next) => {
+  Technical.findAll({
+    where: {
+      id: 6
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    if (response.value_message === 'true') {
+      next();
+    }
+    else {
+      return res.status(503).send({ message: "Hasil seleksi formulir belum dibuka!"});
+    }
+  })
+  .catch(err => {
+    kode_error = 310900;
+    techControl.addErrorLog(kode_error, "Middleware", "JWT", "isMahasiswaCheckOpen", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  })
+}
+
+isLulusInterviewOpen = (req,res,next) => {
+  Technical.findAll({
+    where: {
+      id: 7
+    },
+    attributes: ['value_message']
+  })
+  .then((response) => {
+    response = response[0];
+    if (response.value_message === 'true') {
+      next();
+    }
+    else {
+      return res.status(503).send({ message: "Update lulus interview belum dibuka!"});
+    }
+  })
+  .catch(err => {
+    kode_error = 311000;
+    techControl.addErrorLog(kode_error, "Middleware", "JWT", "isLulusInterviewOpen", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  })
+}
+
 const authJwt = {
   verifyAPIKey: verifyAPIKey,
   verifyToken: verifyToken,
@@ -180,6 +226,8 @@ const authJwt = {
   //toggle
   isOprecMhsOpen: isOprecMhsOpen,
   isKoorUpdateOpen: isKoorUpdateOpen,
-  isZoomOpen: isZoomOpen
+  isZoomOpen: isZoomOpen,
+  isMahasiswaCheckOpen: isMahasiswaCheckOpen,
+  isLulusInterviewOpen: isLulusInterviewOpen
 };
 module.exports = authJwt;

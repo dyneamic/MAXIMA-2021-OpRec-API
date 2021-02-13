@@ -28,6 +28,7 @@ module.exports = function(app) {
   //mahasiswa liat status
   app.post(
     "/api/mhs/status",
+    [authJwt.isMahasiswaCheckOpen],
     mahasiswaController.cekStatusForm
   )
 

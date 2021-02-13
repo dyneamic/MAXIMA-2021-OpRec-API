@@ -148,6 +148,18 @@ function initial() {
     value_desc: "Zoom Route Status",
     value_message: "false"
   })
+
+  Technical.create({
+    id: 6,
+    value_desc: "Mahasiswa Check Route Status",
+    value_message: "false"
+  })
+
+  Technical.create({
+    id: 7,
+    value_desc: "Lulus Interview Route Status",
+    value_message: "false"
+  })
 }
 */
 

@@ -53,6 +53,18 @@ module.exports = function(app) {
     koorController.updateZoomStatus
   )
 
+  app.post(
+    "/api/admin/toggle_mahasiswa_check",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    koorController.updateMahasiswaCheckForm
+  )
+
+  app.post(
+    "/api/admin/toggle_lulus_interview",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    koorController.updateLulusInterview
+  )
+
   app.get(
     "/api/admin/toggle_oprec_status",
     [authJwt.verifyToken],
@@ -70,6 +82,19 @@ module.exports = function(app) {
     [authJwt.verifyToken],
     koorController.statusZoom
   )
+
+  app.get(
+    "/api/admin/toggle_mahasiswa_check_status",
+    [authJwt.verifyToken],
+    koorController.statusMahasiswaCheckForm
+  )
+
+  app.get(
+    "/api/admin/toggle_lulus_interview_status",
+    [authJwt.verifyToken],
+    koorController.statusLulusInterview
+  )
+
   //bph
   app.post(
     "/api/koor/mahasiswa_all",
@@ -123,7 +148,7 @@ module.exports = function(app) {
   
   app.post(
     "/api/koor/hasil_interview",
-    [authJwt.verifyToken, authJwt.isKoorUpdateOpen],
+    [authJwt.verifyToken, authJwt.isLulusInterviewOpen],
     koorController.hasilInterview
   )
 
