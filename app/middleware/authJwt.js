@@ -116,7 +116,7 @@ isOprecMhsOpen = (req, res, next) => {
       next();
     }
     else {
-      return res.status(503).send({ message: "Pendaftaran oprec telah ditutup! "});
+      return res.status(503).send({ message: "Pendaftaran oprec belum dibuka! "});
     }
   })
   .catch(err => {
