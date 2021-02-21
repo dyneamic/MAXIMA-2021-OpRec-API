@@ -11,6 +11,22 @@ const { Storage } = require('@google-cloud/storage');
 const e = require("express");
 const storage = new Storage({ keyFilename: './keys/gcloud-storage.json' });
 
+//date
+const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
+function dateDBFormat(date) {
+  let day = date.getDate();
+  //let month = date.getMonth() + 1;
+  let month = monthNames[date.getMonth()];
+  let year = date.getFullYear();
+
+  if (day < 10) day = '0' + day;
+  if (month < 10) month = '0' + month;
+
+  return day + " " + month + " " + year;
+}
+
 exports.downloadPDF = (req,res) => {
   const { nim_mhs, token } = req.body;
   Mahasiswa.count({
@@ -211,7 +227,7 @@ exports.createZoomLink = async (req,res) => {
           where: {
             nim_mhs: nim_mhs
           },
-          attributes: ['nim_mhs', 'name', 'divisiID', 'lulusSeleksiForm'],
+          attributes: ['nim_mhs', 'name', 'divisiID', 'lulusSeleksiForm', 'tanggal_wawancara'],
           include: [
             {
                 model: Divisi,
@@ -223,6 +239,11 @@ exports.createZoomLink = async (req,res) => {
       
       if (mhs.lulusSeleksiForm === false) return res.status(500).send({ message: "Mohon maaf, anda tidak lulus seleksi formulir Open Recruitment MAXIMA 2021." });
       else {
+        let curr_date = dateDBFormat(new Date());
+        console.log(curr_date);
+
+        if (curr_date != mhs.tanggal_wawancara) return res.status(500).send({ message: "Hari interview anda bukan hari ini."})
+
         const checkedIn = 
           await MahasiswaQueue.count({
             where: {
