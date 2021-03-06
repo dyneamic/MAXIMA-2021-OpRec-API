@@ -107,7 +107,13 @@ exports.cekStatusForm = (req,res) => {
       where: {
         nim_mhs: nim_mhs
       },
-      attributes: ['lulusSeleksiForm', 'tanggal_wawancara', 'lulusInterview']
+      attributes: ['name', 'lulusSeleksiForm', 'tanggal_wawancara', 'lulusInterview'],
+      include: [
+        {
+            model: Divisi,
+            attributes: ['name', 'line_group_link', 'line_qr_link']
+        }
+      ]
     }
   )
   .then(response => {
@@ -242,7 +248,7 @@ exports.createZoomLink = async (req,res) => {
         let curr_date = dateDBFormat(new Date());
         console.log(curr_date);
 
-        if (curr_date != mhs.tanggal_wawancara) return res.status(500).send({ message: "Hari interview anda bukan hari ini."})
+        //if (curr_date != '03 Maret 2021') return res.status(500).send({ message: "Hari interview anda bukan hari ini."})
 
         const checkedIn = 
           await MahasiswaQueue.count({
@@ -266,7 +272,7 @@ exports.createZoomLink = async (req,res) => {
           })
           .catch(err => {
             kode_error = 220502;
-            techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link", err.message);
+            techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link Interview", err.message);
             res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
           })
         }
@@ -292,7 +298,7 @@ exports.createZoomLink = async (req,res) => {
           })
           .catch(err => {
             kode_error = 220501;
-            techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link", err.message);
+            techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link Interview", err.message);
             res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
           })
         }
@@ -301,7 +307,64 @@ exports.createZoomLink = async (req,res) => {
   }
   catch(err){
     kode_error = 220500;
-    techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link", err.message);
+    techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link Interview", err.message);
+    res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
+  }
+}
+
+exports.zoomLinkPleno = async (req,res) => {
+  const { nim_mhs, token } = req.body;
+  try {
+    let zoom_link = 
+    await Technical.findAll({
+      where: {
+        id: 2
+      },
+      attributes: ['value_message']
+    });
+
+    zoom_link = zoom_link[0];
+    zoom_link = zoom_link.value_message;
+
+    const count = 
+      await Mahasiswa.count({
+        where: { 
+          nim_mhs: nim_mhs,
+          token: token
+        }
+      });
+
+    if (count === 0) {
+      return res.status(500).send({ message: "Kombinasi NIM dan Token tidak tepat." });
+    }
+    else {
+      const mhs = 
+        await Mahasiswa.findOne(
+        {
+          where: {
+            nim_mhs: nim_mhs
+          },
+          attributes: ['nim_mhs', 'name', 'divisiID', 'lulusInterview'],
+          include: [
+            {
+                model: Divisi,
+                attributes: ['name']
+            }
+          ]
+        }
+      );
+      
+      if (mhs.lulusInterview === false) return res.status(500).send({ message: "Mohon maaf, anda tidak lulus interview Open Recruitment MAXIMA 2021." });
+      else {
+        let append_str = `&uname=${mhs.divisi.name}%20-%20${mhs.name}%20(${nim_mhs})`;
+        let final_link = zoom_link + append_str;
+        res.status(200).send({ message: final_link });
+      }
+    }
+  }
+  catch(err){
+    kode_error = 220600;
+    techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Zoom Link Pleno", err.message);
     res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
   }
 }

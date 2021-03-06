@@ -7,6 +7,12 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING,
       primaryKey: true
+    },
+    line_group_link: {
+      type: Sequelize.STRING
+    },
+    line_qr_link: {
+      type: Sequelize.STRING
     }
   });
 

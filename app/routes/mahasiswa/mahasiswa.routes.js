@@ -45,10 +45,17 @@ module.exports = function(app) {
     PDFController.createTempPDF
   )
 
-  //check data
+  //zoom link interview
   app.post(
     "/api/mhs/zoom_link",
     [authJwt.isZoomOpen],
     mahasiswaController.createZoomLink
+  )
+
+  //zoom pleno
+  app.post(
+    "/api/mhs/zoom_pleno",
+    [authJwt.isZoomOpen],
+    mahasiswaController.zoomLinkPleno
   )
 };
