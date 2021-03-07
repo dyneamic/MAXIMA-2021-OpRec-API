@@ -185,7 +185,7 @@ isMahasiswaCheckOpen = (req,res,next) => {
       next();
     }
     else {
-      return res.status(503).send({ message: "Hasil seleksi formulir belum dibuka!"});
+      return res.status(503).send({ message: "Mohon maaf, hasil kelulusan interview belum dibuka. Mohon coba lagi di lain waktu."});
     }
   })
   .catch(err => {
