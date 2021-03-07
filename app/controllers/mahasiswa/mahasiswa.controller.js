@@ -3,6 +3,7 @@ const Mahasiswa = db.mahasiswa;
 const Divisi = db.divisi;
 const MahasiswaQueue = db.mahasiswaQueue;
 const Technical = db.technical;
+const Koor = db.koor;
 const gSheets = require("./gSheets.controller");
 const PDFController = require("./pdfDownload.controller");
 const techControl = require("../technical/technical.controller");
@@ -100,31 +101,77 @@ exports.uniqueCheck = (req,res) => {
   })
 }
 
-exports.cekStatusForm = (req,res) => {
+exports.cekStatusForm = async (req,res) => {
   const { nim_mhs } = req.body;
-  Mahasiswa.findOne(
-    {
-      where: {
-        nim_mhs: nim_mhs
-      },
-      attributes: ['name', 'lulusSeleksiForm', 'tanggal_wawancara', 'lulusInterview'],
-      include: [
+  try {
+    let response_mhs = 
+      await Mahasiswa.findOne(
         {
-            model: Divisi,
-            attributes: ['name', 'line_group_link', 'line_qr_link']
+          where: {
+            nim_mhs: nim_mhs
+          },
+          attributes: ['name', 'lulusSeleksiForm', 'tanggal_wawancara', 'lulusInterview'],
+          include: [
+            {
+                model: Divisi,
+                attributes: ['name', 'line_group_link', 'line_qr_link']
+            }
+          ]
         }
-      ]
+      );
+    
+    if (response_mhs === null) {
+      response_koor = 
+        await Koor.findOne(
+          {
+            where: {
+              nim_koor: nim_mhs
+            },
+            attributes: ['name'],
+            include: [
+              {
+                  model: Divisi,
+                  attributes: ['name', 'line_group_link', 'line_qr_link']
+              }
+            ]
+          }
+        );
     }
-  )
-  .then(response => {
-    if (response === null) return res.status(403).send({ message: "NIM anda tidak ditemukan! Coba cek lagi?"});
-    res.status(200).send({message: response});
-  })
-  .catch(err => {
+
+    if ((response_mhs === null) && (response_koor === null)) return res.status(403).send({message: "NIM anda tidak ditemukan! Coba cek lagi?"});
+    else {
+      let final_res = {
+        'nim': nim_mhs,
+        'name': null,
+        'divisi': null,
+        'line_group_link': null,
+        'line_qr_link': null,
+        'lulusInterview': null
+      };
+
+      if (response_mhs != null) {
+        final_res.name = response_mhs.name;
+        final_res.divisi = response_mhs.divisi.name;
+        final_res.line_group_link = response_mhs.divisi.line_group_link;
+        final_res.line_qr_link = response_mhs.divisi.line_qr_link;
+        final_res.lulusInterview = response_mhs.lulusInterview;
+      }
+      else {
+        final_res.name = response_koor.name;
+        if (response_koor.divisi.name === 'BPH') final_res.divisi = response_koor.divisi.name;
+        else final_res.divisi = 'Koordinator ' + response_koor.divisi.name;
+        final_res.line_group_link = response_koor.divisi.line_group_link;
+        final_res.line_qr_link = response_koor.divisi.line_qr_link;
+        final_res.lulusInterview = true;
+      }
+      return res.status(200).send(final_res);
+    }
+  }
+  catch(err) {
     kode_error = 220300;
     techControl.addErrorLog(kode_error, "Controller", "Mahasiswa", "Cek Status Form", err.message);
     res.status(500).send({ message: "Telah terjadi kesalahan. Silahkan mencoba lagi. Kode Error: " + kode_error });
-  })
+  }
 }
 
 exports.SignUp = (req,res) => {
