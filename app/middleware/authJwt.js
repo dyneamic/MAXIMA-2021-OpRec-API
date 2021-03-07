@@ -185,7 +185,7 @@ isMahasiswaCheckOpen = (req,res,next) => {
       next();
     }
     else {
-      return res.status(503).send({ message: "Mohon maaf, hasil kelulusan interview belum dibuka. Mohon coba lagi di lain waktu."});
+      return res.status(503).send({ message: "Maaf, kamu belum bisa mengecek status kelulusan interview MAXIMA 2021. Coba ulang di lain waktu, ya!"});
     }
   })
   .catch(err => {
